@@ -7,6 +7,7 @@ import com.aesncast.pw_android.util.PyRandom;
 import org.junit.Test;
 
 import java.math.BigInteger;
+import java.nio.ByteBuffer;
 
 public class TransformTest {
     @Test
@@ -24,6 +25,8 @@ public class TransformTest {
         PyRandom r = new PyRandom();
         assertEquals(new BigInteger("10868450558671247443152026947160338505683745266658651051718065983487878962987857602829315249215796444208488632888003673539585986066311769564391053988452926"),
                      r.objectToSeed(""));
+
+        r.seed("");
 
         // assertEquals(Transform.seed("", 1, 1), 1L);
         // assertEquals(Transform.seed(""), 4124137760L);

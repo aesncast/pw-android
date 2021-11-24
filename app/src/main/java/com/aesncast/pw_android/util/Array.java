@@ -28,6 +28,17 @@ public class Array {
         }
     }
 
+    public static void reverse(int[] arr) {
+        int l = arr.length;
+        int tmp;
+
+        for (int i = 0; i < l / 2; i++) {
+            tmp = arr[i];
+            arr[i] = arr[l - i - 1];
+            arr[l - i - 1] = tmp;
+        }
+    }
+
     public static <T> T[] appendCopy(T[] arr1, T[] arr2)
     {
         T[] ret = Arrays.copyOf(arr1, arr1.length + arr2.length);
