@@ -18,12 +18,10 @@ import java.util.List;
 
 public class PyRandom {
     private static int N = 624;
-    /*
     private static int M = 397;
-    private static int MATRIX_A = 0x9908b0df;    // constant vector a
-    private static int UPPER_MASK = 0x80000000;  // most significant w-r bits
-    private static int LOWER_MASK = 0x7fffffff;  // least significant r bits
-    */
+    private static UInt32 MATRIX_A = new UInt32(0x9908b0dfL);    // constant vector a
+    private static UInt32 UPPER_MASK = new UInt32(0x80000000L);  // most significant w-r bits
+    private static UInt32 LOWER_MASK = new UInt32(0x7fffffffL);  // least significant r bits
 
     UInt32 index = new UInt32(0);
     public UInt32[] state = new UInt32[N]; // mersenne twister state
@@ -169,7 +167,133 @@ public class PyRandom {
         this.init_by_array(key);
     }
 
+    public long randbelow(long n)
+    {
+        if (n == 0)
+            return 0;
+
+        int len = BigInteger.valueOf(n).bitLength();
+        long r = this.getrandbits(len);
+
+        while (r > n)
+            r = this.getrandbits(len);
+
+        return r;
+    }
+
+    private UInt32 genrandUInt32() {
+        UInt32 y = new UInt32(0);
+        UInt32[] mag01 = new UInt32[]{new UInt32(0x0L), MATRIX_A};
+        /* mag01[x] = x * MATRIX_A  for x=0,1 */
+
+        if (this.index.geq(N)) { /* generate N words at one time */
+            int kk;
+
+            for (kk = 0; kk < N - M; kk++)
+            {
+                // y = (mt[kk]&UPPER_MASK)|(mt[kk+1]&LOWER_MASK);
+                UInt32 a = new UInt32(state[kk]);
+                UInt32 b = new UInt32(state[kk + 1]);
+                a.and(UPPER_MASK);
+                b.and(LOWER_MASK);
+                a.or(b);
+                y.set(a);
+
+                // mt[kk] = mt[kk+M] ^ (y >> 1) ^ mag01[y & 0x1U];
+                b.set(state[kk+M]);
+                a.rshift(1);
+                b.xor(a);
+                y.and(0x1L);
+                b.xor(mag01[y.toInt()]);
+                state[kk].set(b);
+            }
+
+            for (; kk < N - 1; kk++)
+            {
+                // y = (mt[kk]&UPPER_MASK)|(mt[kk+1]&LOWER_MASK);
+                UInt32 a = new UInt32(state[kk]);
+                UInt32 b = new UInt32(state[kk + 1]);
+                a.and(UPPER_MASK);
+                b.and(LOWER_MASK);
+                a.or(b);
+                y.set(a);
+
+                // mt[kk] = mt[kk+(M-N)] ^ (y >> 1) ^ mag01[y & 0x1U];
+                b.set(state[kk+(M-N)]);
+                a.rshift(1);
+                b.xor(a);
+                y.and(0x1L);
+                b.xor(mag01[y.toInt()]);
+                state[kk].set(b);
+            }
+
+            // y = (mt[N-1]&UPPER_MASK)|(mt[0]&LOWER_MASK);
+            UInt32 a = new UInt32(state[N-1]);
+            UInt32 b = new UInt32(state[0]);
+            a.and(UPPER_MASK);
+            b.and(LOWER_MASK);
+            a.or(b);
+            y.set(a);
+
+            // mt[N-1] = mt[M-1] ^ (y >> 1) ^ mag01[y & 0x1U];
+            b.set(state[M-1]);
+            a.rshift(1);
+            b.xor(a);
+            y.and(0x1L);
+            b.xor(mag01[y.toInt()]);
+            state[N-1].set(b);
+
+            this.index.set(0);
+        }
+
+        // y = mt[self->index++];
+        // y ^= (y >> 11);
+        // y ^= (y << 7) & 0x9d2c5680U;
+        // y ^= (y << 15) & 0xefc60000U;
+        // y ^= (y >> 18);
+        y = state[index.toInt()];
+        index.inc();
+        UInt32 y2 = new UInt32(y);
+        y2.rshift(11);
+        y.xor(y2);
+
+        y2.set(y);
+        y2.lshift(7);
+        y2.and(0x9d2c5680L);
+        y.xor(y2);
+
+        y2.set(y);
+        y2.lshift(15);
+        y2.and(0xefc60000L);
+        y.xor(y2);
+
+        y2.set(y);
+        y2.rshift(18);
+        y.xor(y2);
+        return y;
+    }
+
+    private long getrandbits(int len) {
+        if (len <= 0)
+            return 0;
+
+        if (len <= 32) {
+            UInt32 u = this.genrandUInt32();
+            u.rshift(32 - len);
+            return u.toLong();
+        }
+
+        // TODO: random numbers with more than 32 bits
+        return -1;
+    }
+
+    public long randrange(long min, long max)
+    {
+        long width = max - min;
+        return min + this.randbelow(width);
+    }
+
     public long randint(long min, long max) {
-        return 1;
+        return this.randrange(min, max+1);
     }
 }

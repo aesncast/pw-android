@@ -18,19 +18,4 @@ public class TransformTest {
         assertEquals(new BigInteger("3291835376408573590478209986637364656599265025014012802863049622424083630783948306431999498413285667939592978357630573418285899181951386474024455144309711"),
                      Transform.to_int(Transform.sha512("")));
     }
-
-    @Test
-    public void pyrandom_conforms_to_python_random() throws Exception
-    {
-        PyRandom r = new PyRandom();
-        assertEquals(new BigInteger("10868450558671247443152026947160338505683745266658651051718065983487878962987857602829315249215796444208488632888003673539585986066311769564391053988452926"),
-                     r.objectToSeed(""));
-
-        r.seed(65536);
-
-        for (int i = 0; i < r.state.length; ++i) {
-            System.out.println(r.state[i].toLong());
-        }
-
-    }
 }
