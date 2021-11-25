@@ -48,7 +48,7 @@ public class Transform {
         return new BigInteger(1, bytes);
     }
 
-    /*private*/public static long seed(Object i, long min, long max)
+    private static long seed(Object i, long min, long max)
     {
         try {
             _random.seed(i);
@@ -60,12 +60,12 @@ public class Transform {
         return _random.randint(min, max);
     }
 
-    /*private*/public static long seed(Object i, long min)
+    private static long seed(Object i, long min)
     {
         return seed(i, min, (2 << 32) - 1);
     }
 
-    /*private*/public static long seed(Object i)
+    private static long seed(Object i)
     {
         return seed(i, 0);
     }
@@ -181,5 +181,30 @@ public class Transform {
     {
         String _s = toString(s);
         return _s.replace(to_replace, replacement);
+    }
+
+    public static String make_unambiguous(Object s)
+    {
+        String _s = toString(s);
+
+        if (_s.isEmpty())
+            return _s;
+
+        String safe_characters = "abcdefghkmnpqrsuvwxyz";
+        char[] unsafe_characters = "ZlLtTiIjJoO012".toCharArray();
+
+        for (char u: unsafe_characters) {
+            String tmp = _s + u;
+            // System.out.format("seed: %s, len: %d\n", _s + u, safe_characters.length() - 1);
+            int i = (int)seed(tmp, 0, safe_characters.length() - 1);
+
+            if (_s.indexOf(u) != -1)
+            {
+                char replacement = safe_characters.charAt(i);
+                _s = replace(_s, String.valueOf(u), String.valueOf(replacement));
+            }
+        }
+
+        return _s;
     }
 }

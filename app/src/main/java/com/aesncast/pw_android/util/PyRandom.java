@@ -146,9 +146,25 @@ public class PyRandom {
     {
         BigInteger _seed = this.objectToSeed(obj);
         byte[] bytes = _seed.toByteArray();
+        // System.out.format("%d bytes in key\n", bytes.length);
+
         if (bytes.length < 4) {
-            byte[] tmp = new byte[4];
-            System.arraycopy(bytes, 0, tmp, 4 - bytes.length, bytes.length);
+            int nlen = 4;
+            byte[] tmp = new byte[nlen];
+            System.arraycopy(bytes, 0, tmp, nlen - bytes.length, bytes.length);
+            bytes = tmp;
+        }
+        else if (bytes[0] == 0x00)
+        {
+            byte[] tmp = new byte[bytes.length - 1];
+            System.arraycopy(bytes, 1, tmp, 0, tmp.length);
+            bytes = tmp;
+        }
+
+        if (bytes.length % 4 != 0) {
+            int nlen = (int)(Math.ceil(bytes.length / 4.0f) * 4);
+            byte[] tmp = new byte[nlen];
+            System.arraycopy(bytes, 0, tmp, nlen - bytes.length, bytes.length);
             bytes = tmp;
         }
 
@@ -165,20 +181,6 @@ public class PyRandom {
             key[i] = new UInt32(ints[i]);
 
         this.init_by_array(key);
-    }
-
-    public long randbelow(long n)
-    {
-        if (n == 0)
-            return 0;
-
-        int len = BigInteger.valueOf(n).bitLength();
-        long r = this.getrandbits(len);
-
-        while (r > n)
-            r = this.getrandbits(len);
-
-        return r;
     }
 
     private UInt32 genrandUInt32() {
@@ -206,6 +208,7 @@ public class PyRandom {
                 y.and(0x1L);
                 b.xor(mag01[y.toInt()]);
                 state[kk].set(b);
+                // System.out.format("mt[%d] = %d ^ %d ^ %d = %d\n", kk, state[kk+M].toLong(), a.toLong(), mag01[y.toInt()].toLong(), state[kk].toLong());
             }
 
             for (; kk < N - 1; kk++)
@@ -279,7 +282,9 @@ public class PyRandom {
 
         if (len <= 32) {
             UInt32 u = this.genrandUInt32();
+            // System.out.format("getrandbits len: %d val %d\n", len, u.toLong());
             u.rshift(32 - len);
+            // System.out.format("getrandbits after shift: %d\n", u.toLong());
             return u.toLong();
         }
 
@@ -287,13 +292,31 @@ public class PyRandom {
         return -1;
     }
 
+    public long randbelow(long n)
+    {
+        if (n == 0)
+            return 0;
+
+        int len = BigInteger.valueOf(n).bitLength();
+        // System.out.format("randbelow: %d, bits: %d\n", n, len);
+
+        long r = this.getrandbits(len);
+
+        while (r >= n)
+            r = this.getrandbits(len);
+
+        return r;
+    }
+
     public long randrange(long min, long max)
     {
         long width = max - min;
+        // System.out.format("randrange: generating %d + randbelow(%d)\n", min, width);
         return min + this.randbelow(width);
     }
 
     public long randint(long min, long max) {
+        // System.out.format("randint: generating from %d to %d\n", min, max);
         return this.randrange(min, max+1);
     }
 }

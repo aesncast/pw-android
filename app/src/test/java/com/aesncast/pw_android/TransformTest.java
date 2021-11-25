@@ -18,4 +18,12 @@ public class TransformTest {
         assertEquals(new BigInteger("3291835376408573590478209986637364656599265025014012802863049622424083630783948306431999498413285667939592978357630573418285899181951386474024455144309711"),
                      Transform.to_int(Transform.sha512("")));
     }
+
+    @Test
+    public void make_unambiguous_conforms_to_pwpy() throws Exception
+    {
+        assertEquals("hewwf wfrwd", Transform.make_unambiguous("hello world"));
+        assertEquals("abcdefghcxknmncpqrssuvwxyz", Transform.make_unambiguous("abcdefghijklmnopqrstuvwxyz"));
+        assertEquals("5S4rnaxNWwnxssku8uzsagdEphkAghWUF4shwwaXKMsubyfAxg4ybUeuXVWS9HdNcEypmeXn8FeGwnD4wkrn9Dep", Transform.make_unambiguous("5S4rnaTNWonxss1u8LzsaJdEph1AJhWUF4sh2waXKMsutyfAxg4ybUeuXVWS9HdNcEypmeXn8FZGonD4w1rj9DZp"));
+    }
 }
