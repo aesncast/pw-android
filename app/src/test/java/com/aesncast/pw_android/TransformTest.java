@@ -26,9 +26,11 @@ public class TransformTest {
         assertEquals(new BigInteger("10868450558671247443152026947160338505683745266658651051718065983487878962987857602829315249215796444208488632888003673539585986066311769564391053988452926"),
                      r.objectToSeed(""));
 
-        r.seed("");
+        r.seed(65536);
 
-        // assertEquals(Transform.seed("", 1, 1), 1L);
-        // assertEquals(Transform.seed(""), 4124137760L);
+        for (int i = 0; i < r.state.length; ++i) {
+            System.out.println(r.state[i].toLong());
+        }
+
     }
 }

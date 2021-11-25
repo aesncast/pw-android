@@ -13,6 +13,7 @@ import java.nio.ByteOrder;
 import java.nio.IntBuffer;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class PyRandom {
@@ -56,13 +57,8 @@ public class PyRandom {
     {
         this.init_genrand(19650218);
 
-        // correct
-        //for (int i = 0; i < key.length; ++i)
-        //    System.out.println(key[i].toLong());
-
         int i=1;
         int j=0;
-
         int k = key.length;
 
         if (N > key.length)
@@ -125,6 +121,10 @@ public class PyRandom {
         {
             _seed = (BigInteger)i;
         }
+        else if (i instanceof Integer)
+        {
+            _seed = BigInteger.valueOf((Integer)i);
+        }
         else if (i instanceof String)
         {
             String s = (String)i;
@@ -148,10 +148,15 @@ public class PyRandom {
     {
         BigInteger _seed = this.objectToSeed(obj);
         byte[] bytes = _seed.toByteArray();
+        if (bytes.length < 4) {
+            byte[] tmp = new byte[4];
+            System.arraycopy(bytes, 0, tmp, 4 - bytes.length, bytes.length);
+            bytes = tmp;
+        }
+
         Array.reverse(bytes);
 
         // https://stackoverflow.com/a/11438071
-        // maybe reverse
         IntBuffer intBuf = ByteBuffer.wrap(bytes).order(ByteOrder.LITTLE_ENDIAN).asIntBuffer();
         int[] ints = new int[intBuf.remaining()];
         intBuf.get(ints);

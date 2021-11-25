@@ -1,5 +1,7 @@
 package com.aesncast.pw_android.util;
 
+import java.nio.ByteBuffer;
+
 /*
     Sincerely java: i fucking hate you, you absolute piece of trash language.
  */
@@ -304,6 +306,11 @@ public class UInt32 implements Comparable<UInt32> {
     public long toLong()
     {
         return value;
+    }
+
+    public byte[] toBytes()
+    {
+        return ByteBuffer.allocate(4).putInt(this.toInt()).array();
     }
 
     @Override
