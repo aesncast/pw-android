@@ -14,7 +14,9 @@ import java.nio.IntBuffer;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class PyRandom {
     private static int N = 624;
@@ -318,5 +320,48 @@ public class PyRandom {
     public long randint(long min, long max) {
         // System.out.format("randint: generating from %d to %d\n", min, max);
         return this.randrange(min, max+1);
+    }
+
+    public <T> T[] sample(T[] population, int k) {
+        int n = population.length;
+
+        if (k < 0)
+            throw new IllegalArgumentException("k is smaller than 0");
+
+        if (k > n)
+            throw new IllegalArgumentException("k is larger than population");
+
+        T[] ret = Arrays.copyOf(population, k);
+        int setsize = 21;
+
+        if (k > 5)
+            setsize += Math.pow(4, Math.ceil(MathUtil.logB(k * 3, 4)));
+
+        if (n <= setsize)
+        {
+            T[] pool = Arrays.copyOf(population, population.length);
+
+            for (int i = 0; i < k; ++i) {
+                int j = (int)randbelow(n - i);
+                ret[i] = pool[j];
+                pool[j] = pool[n - i - 1];
+            }
+        }
+        else
+        {
+            Set<Integer> selected = new HashSet<>();
+
+            for (int i = 0; i < k; ++i) {
+                Integer j = (int) randbelow(n);
+
+                while (selected.contains(j))
+                    j = (int)randbelow(n);
+
+                selected.add(j);
+                ret[i] = population[j];
+            }
+        }
+
+        return ret;
     }
 }

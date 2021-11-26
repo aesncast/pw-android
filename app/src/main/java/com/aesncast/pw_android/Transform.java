@@ -10,14 +10,17 @@ import com.aesncast.pw_android.util.Base58;
 import com.aesncast.pw_android.util.Base64;
 import com.aesncast.pw_android.util.PyRandom;
 import com.aesncast.pw_android.util.SHA;
+import com.aesncast.pw_android.util.StringUtil;
 
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.stream.Stream;
 
 public class Transform {
-    private static PyRandom _random = new PyRandom();
+    private static final PyRandom _random = new PyRandom();
 
     private static String toString(Object i)
     {
@@ -54,7 +57,7 @@ public class Transform {
             _random.seed(i);
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
-            return 0l;
+            return 0L;
         }
 
         return _random.randint(min, max);
@@ -121,7 +124,7 @@ public class Transform {
     public static <T> String init(T s, String key, String domain, String user)
     {
 
-        String _s = append(_s, key);
+        String _s = append(s, key);
         _s = append(_s, ":");
         _s = append(_s, user);
         _s = append(_s, "@");
@@ -134,12 +137,7 @@ public class Transform {
     {
         String _s = "";
 
-        if (s instanceof String)
-            _s = append((String)s, key);
-
-        if (s instanceof byte[])
-            _s = append((byte[])s, key);
-
+        _s = append(s, key);
         _s = append(_s, ":");
         _s = append(_s, user);
         _s = append(_s, "@");
@@ -203,6 +201,112 @@ public class Transform {
                 char replacement = safe_characters.charAt(i);
                 _s = replace(_s, String.valueOf(u), String.valueOf(replacement));
             }
+        }
+
+        return _s;
+    }
+
+    public static String insert(Object s, int index, String to_insert)
+    {
+        StringBuilder sb = new StringBuilder(toString(s));
+        sb.insert(index, to_insert);
+        return sb.toString();
+    }
+
+    public static String insert(Object s, int index, char to_insert)
+    {
+        StringBuilder sb = new StringBuilder(toString(s));
+        sb.insert(index, to_insert);
+        return sb.toString();
+    }
+
+    public static String replace_at(Object s, int index, char replacement)
+    {
+        StringBuilder sb = new StringBuilder(toString(s));
+        sb.setCharAt(index, replacement);
+        return sb.toString();
+    }
+
+    public static String add_special_characters(Object s, int min, int max, String special_chars)
+    {
+        String _s = toString(s);
+
+        if (_s.isEmpty())
+            return _s;
+
+        if (max < 0 || max < min)
+            return _s;
+
+        long sd = seed(_s, min, max);
+        int num_chars = Math.min(_s.length(), (int)sd);
+
+        if (num_chars == 0)
+            return _s;
+
+        long lsc = special_chars.length()-1;
+
+        int dst = _s.length() / num_chars;
+        int pos = 0;
+
+        for (int i = 0; i < num_chars; ++i) {
+            String tmp = _s + String.valueOf(i);
+            byte[] hsh = sha256(tmp);
+
+            long schar_seed = seed(hsh, 0, lsc);
+            char schar = special_chars.charAt((int)schar_seed);
+
+            long ipos = seed(tmp, pos, pos + dst);
+            _s = insert(_s, (int)ipos, schar);
+            pos = pos + (dst + 1);
+        }
+
+        return _s;
+    }
+
+    public static String add_simple_special_characters(Object s, int min, int max)
+    {
+        return add_special_characters(s, min, max, "#+*%&[]=?_.:");
+    }
+
+    public static String add_some_special_characters(Object s, String special_chars)
+    {
+        String _s = toString(s);
+
+        int num_chars = Math.max((int)Math.floor(Math.sqrt(_s.length())/2), 1);
+        return add_special_characters(s, 1, num_chars, special_chars);
+    }
+
+    public static String add_some_simple_special_characters(Object s)
+    {
+        String _s = toString(s);
+
+        int num_chars = Math.max((int)Math.floor(Math.sqrt(_s.length())/2), 1);
+        return add_simple_special_characters(s, 1, num_chars);
+    }
+
+    public static String capitalize_some(Object s)
+    {
+        String _s = toString(s);
+
+        String[] split = StringUtil.multisplit(_s, "\\.", " ", "_");
+        String[] words = Arrays.stream(split).filter(x -> (!x.isEmpty()) && Character.isAlphabetic(x.charAt(0))).toArray(String[]::new);
+        int lw = words.length;
+
+        if (lw <= 0)
+            return _s;
+
+        int num_words = (int)seed(_s, 1, lw);
+
+        String[] rwords = _random.sample(words, num_words);
+
+        for (String word : rwords)
+        {
+            int i = _s.indexOf(word);
+
+            if (i < 0)
+                continue;
+
+            _s = replace_at(_s, i, Character.toUpperCase(_s.charAt(i)));
         }
 
         return _s;

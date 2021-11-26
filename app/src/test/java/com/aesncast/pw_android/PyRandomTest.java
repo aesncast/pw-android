@@ -12,7 +12,7 @@ import java.math.BigInteger;
 public class PyRandomTest {
 
     @Test
-    public void pyrandom_conforms_to_python_random() throws Exception
+    public void pyrandom_seed_conforms_to_python_random() throws Exception
     {
         PyRandom r = new PyRandom();
         assertEquals(new BigInteger("10868450558671247443152026947160338505683745266658651051718065983487878962987857602829315249215796444208488632888003673539585986066311769564391053988452926"),
@@ -50,5 +50,39 @@ public class PyRandomTest {
         assertEquals(14L, r.randint(0, 20));
         assertEquals(4L, r.randint(0, 20));
         assertEquals(13L, r.randint(0, 20));
+    }
+
+    @Test
+    public void pyrandom_sample_conforms_to_python_random() throws Exception
+    {
+        PyRandom r = new PyRandom();
+        r.seed("");
+
+        String[] list = new String[]{"a", "b", "c", "d", "e", "f"};
+
+        String[] sel1 = r.sample(list, 3);
+        assertEquals("d", sel1[0]);
+        assertEquals("e", sel1[1]);
+        assertEquals("b", sel1[2]);
+
+        String[] sel2 = r.sample(list, 3);
+        assertEquals("d", sel2[0]);
+        assertEquals("b", sel2[1]);
+        assertEquals("c", sel2[2]);
+
+        String[] sel3 = r.sample(list, 3);
+        assertEquals("e", sel3[0]);
+        assertEquals("a", sel3[1]);
+        assertEquals("c", sel3[2]);
+
+        String[] sel4 = r.sample(list, 3);
+        assertEquals("c", sel4[0]);
+        assertEquals("a", sel4[1]);
+        assertEquals("d", sel4[2]);
+
+        String[] sel5 = r.sample(list, 3);
+        assertEquals("d", sel5[0]);
+        assertEquals("c", sel5[1]);
+        assertEquals("b", sel5[2]);
     }
 }
