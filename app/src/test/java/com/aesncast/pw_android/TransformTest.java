@@ -2,12 +2,8 @@ package com.aesncast.pw_android;
 
 import static org.junit.Assert.assertEquals;
 
-import com.aesncast.pw_android.util.PyRandom;
-
 import org.junit.Test;
-
 import java.math.BigInteger;
-import java.nio.ByteBuffer;
 
 public class TransformTest {
     @Test

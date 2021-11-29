@@ -17,9 +17,12 @@ package com.aesncast.pw_android.util;
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
+ * This file is modified.
  */
 
 import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
 /**
@@ -58,11 +61,11 @@ public class Base58 {
      * Encodes the given bytes as a base58 string (no checksum is appended).
      *
      * @param input the bytes to encode
-     * @return the base58-encoded string
+     * @return the base58-encoded bytes
      */
-    public static String encode(byte[] input) {
+    public static byte[] encode(byte[] input) {
         if (input.length == 0) {
-            return "";
+            return new byte[0];
         }
         // Count leading zeros.
         int zeros = 0;
@@ -87,7 +90,12 @@ public class Base58 {
             encoded[--outputStart] = ENCODED_ZERO;
         }
         // Return encoded string (including encoded leading zeros).
-        return new String(encoded, outputStart, encoded.length - outputStart);
+        return new String(encoded, outputStart, encoded.length - outputStart).getBytes(StandardCharsets.UTF_8);
+    }
+
+    public static byte[] encode(String input)
+    {
+        return Base58.encode(input.getBytes(StandardCharsets.UTF_8));
     }
 
     /**

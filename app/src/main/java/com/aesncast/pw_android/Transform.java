@@ -13,6 +13,8 @@ import com.aesncast.pw_android.util.SHA;
 import com.aesncast.pw_android.util.StringUtil;
 
 import java.math.BigInteger;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.nio.charset.StandardCharsets;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
@@ -75,12 +77,22 @@ public class Transform {
 
     public static byte[] base58(Object s)
     {
-        return base58(toString(s));
+        if (s instanceof String)
+            return Base58.encode((String)s);
+        else if (s instanceof byte[])
+            return Base58.encode((byte[])s);
+        else
+            return new byte[0];
     }
 
     public static byte[] base64(Object s)
     {
-        return Base64.decode(toString(s));
+        if (s instanceof String)
+            return Base64.encode((String)s);
+        else if (s instanceof byte[])
+            return Base64.encode((byte[])s);
+        else
+            return new byte[0];
     }
 
     public static byte[] sha256(Object s) {
@@ -371,5 +383,115 @@ public class Transform {
     public static String diceware_long(Object s)
     {
         return diceware(s, 4, 5);
+    }
+
+    // do not use
+    public static String bad_legacy1(Object _s, String key, String domain) {
+        String s = toString(_s);
+        s = append(s, key);
+        s = append(s, ":");
+        s = append(s, domain);
+        s = toString(base64(sha256(s)));
+        s = replace(s, "+", "E");
+        s = replace(s, "/", "a");
+        s = limit(s, 20);
+        s = append(s, "\n");
+
+        return s;
+    }
+
+    private static String bad_make_easy_to_read(String s) {
+        s = replace(s, "i", "u");
+        s = replace(s, "I", "P");
+        s = replace(s, "l", "h");
+        s = replace(s, "1", "T");
+        s = replace(s, "0", "4");
+        s = replace(s, "O", "r");
+        s = replace(s, "o", "y");
+        s = replace(s, "vv", "nW");
+        s = replace(s, "VV", "K3");
+        return s;
+    }
+
+    public static BigInteger bad_seed_from_str(String s) {
+        byte[] b64 = base64(s);
+        byte[] r = new byte[Math.min(b64.length, 5)+1];
+
+        for (int i = 0; i < r.length - 1; ++i)
+            r[i] = b64[i];
+
+        r[r.length - 1] = '\n';
+
+        String ret = "";
+        ByteBuffer b = ByteBuffer.wrap(new byte[4], 0, 4);
+        b.order( ByteOrder.LITTLE_ENDIAN);
+
+        for (int i = 0; i < Math.min(r.length, 4); ++i)
+            b.put(i, r[i]);
+
+        ret = ret + String.valueOf(b.getInt());
+
+        if (r.length > 4) {
+            byte[] r2 = new byte[r.length - 4];
+            System.arraycopy(r, 4, r2, 0, r.length - 4);
+            Array.reverse(r2);
+
+            BigInteger x = new BigInteger(r2);
+            ret = ret + x.toString();
+        }
+
+        return new BigInteger(ret);
+    }
+
+    private static String bad_add_special_characters(String s) {
+        BigInteger sd = bad_seed_from_str(s);
+        int seps = sd.mod(BigInteger.valueOf(5L)).intValue();
+
+        if (seps <= 0)
+            return s.trim();
+
+        int i = s.length() / seps;
+        int nxt = i;
+        String sepchars = "_.,;!? ";
+
+        for (int x = 0; x < seps; ++x)
+        {
+            char ws = sepchars.charAt((seps + x) % sepchars.length());
+            s = insert(s, nxt, ws);
+            nxt += i;
+        }
+
+        return s.trim();
+    }
+
+    public static String bad_legacy2(Object _s, String key, String domain, String user) {
+        String s = toString(_s);
+
+        if (user.isEmpty())
+        {
+            s = append(s, key);
+            s = append(s, "@");
+            s = append(s, domain);
+        }
+        else
+        {
+            s = append(s, key);
+            s = append(s, ":");
+            s = append(s, user);
+            s = append(s, "@");
+            s = append(s, domain);
+        }
+
+        s = toString(base64(sha512(s)));
+        s = replace(s, "+", "E");
+        s = replace(s, "/", "a");
+        s = limit(s, 20);
+        s = bad_make_easy_to_read(s);
+        s = limit(s, 20);
+        s = bad_add_special_characters(s);
+        s = limit(s, 20);
+        s = append(s, "\n");
+
+        return s;
     }
 }
