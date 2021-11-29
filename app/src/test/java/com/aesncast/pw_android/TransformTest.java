@@ -18,7 +18,90 @@ public class TransformTest {
                      Transform.to_int(Transform.sha512("")));
     }
 
-    // seed is tested in PyRandomTest
+    @Test
+    public void seed_conforms_to_pwpy() {
+        assertEquals(0L, Transform.seed(0, 0, 0));
+        assertEquals(1L, Transform.seed(0, 0, 1));
+        assertEquals(1L, Transform.seed(0, 0, 2));
+        assertEquals(3L, Transform.seed(0, 0, 3));
+        assertEquals(3L, Transform.seed(0, 0, 4));
+        assertEquals(50494L, Transform.seed(0, 0, 65535));
+        assertEquals(17611L, Transform.seed(1, 0, 65535));
+        assertEquals(7412L,  Transform.seed(2, 0, 65535));
+        assertEquals(31190L, Transform.seed(3, 0, 65535));
+        assertEquals(30939L, Transform.seed(4, 0, 65535));
+        assertEquals(59569L, Transform.seed("", 0, 65535));
+        assertEquals(60319L, Transform.seed("abc", 0, 65535));
+        assertEquals(46370L, Transform.seed("hello", 0, 65535));
+        assertEquals(53137L, Transform.seed("hello world", 0, 65535));
+    }
+
+    @Test
+    public void append_conforms_to_pwpy()
+    {
+        assertEquals("", Transform.append("", ""));
+        assertEquals("a", Transform.append("a", ""));
+        assertEquals("a", Transform.append("", "a"));
+        assertEquals("ab", Transform.append("a", "b"));
+        assertEquals("helloworld", Transform.append("hello", "world"));
+    }
+
+    @Test
+    public void prepend_conforms_to_pwpy()
+    {
+        assertEquals("", Transform.prepend("", ""));
+        assertEquals("a", Transform.prepend("a", ""));
+        assertEquals("a", Transform.prepend("", "a"));
+        assertEquals("ba", Transform.prepend("a", "b"));
+        assertEquals("worldhello", Transform.prepend("hello", "world"));
+    }
+
+    @Test
+    public void cut_conforms_to_pwpy()
+    {
+        assertEquals("", Transform.cut("", 0, 0));
+        assertEquals("", Transform.cut("a", 0, 0));
+        assertEquals("", Transform.cut("hello world", 0, 0));
+        assertEquals("hello", Transform.cut("hello world", 0, 5));
+        assertEquals("world", Transform.cut("hello world", 6, 11));
+        assertEquals("world", Transform.cut("hello world", 6, 200));
+        assertEquals("hello world", Transform.cut("hello world", -200, 200));
+        assertEquals("", Transform.cut("hello world", 200, -200));
+    }
+
+    @Test
+    public void replace_conforms_to_pwpy()
+    {
+        assertEquals("", Transform.replace("", "", ""));
+        assertEquals("", Transform.replace("a", "a", ""));
+        assertEquals("b", Transform.replace("a", "a", "b"));
+        assertEquals("hello", Transform.replace("henno", "n", "l"));
+        assertEquals("heabcabco worabcd", Transform.replace("hello world", "l", "abc"));
+    }
+
+    @Test
+    public void replace_at_conforms_to_pwpy()
+    {
+        assertEquals("", Transform.replace_at("", 0, 'a'));
+        assertEquals("b", Transform.replace_at("a", 0, 'b'));
+        assertEquals("ab1", Transform.replace_at("abc", 200, '1'));
+        assertEquals("1bc", Transform.replace_at("abc", -200, '1'));
+        assertEquals("hello1world", Transform.replace_at("hello world", 5, '1'));
+    }
+
+    @Test
+    public void insert_conforms_to_pwpy()
+    {
+        assertEquals("", Transform.insert("", 0, ""));
+        assertEquals("a", Transform.insert("", 0, "a"));
+        assertEquals("a", Transform.insert("a", 0, ""));
+        assertEquals("ab", Transform.insert("a", 1, "b"));
+        assertEquals("ba", Transform.insert("a", 0, "b"));
+        assertEquals("ab", Transform.insert("a", 200, "b"));
+        assertEquals("ba", Transform.insert("a", -200, "b"));
+        assertEquals("hello", Transform.insert("heo", 2, "ll"));
+        assertEquals("hello world", Transform.insert("helld", 3, "lo wor"));
+    }
 
     @Test
     public void make_unambiguous_conforms_to_pwpy() {
@@ -44,5 +127,21 @@ public class TransformTest {
         assertEquals("Hello", Transform.capitalize_some("hello"));
         assertEquals("Hello World", Transform.capitalize_some("hello world"));
         assertEquals("aspen Spoon 567 scrap", Transform.capitalize_some("aspen spoon 567 scrap"));
+    }
+
+    @Test
+    public void diceware_conforms_to_pwpy()
+    {
+        assertEquals("movie extra beat chap", Transform.diceware("", 1, 4));
+        assertEquals("solon cough vigil mew", Transform.diceware("abc", 1, 4));
+        assertEquals("spiro keel dow", Transform.diceware("hello", 1, 4));
+        assertEquals("aspen spoon 567 scrap", Transform.diceware("hello world", 1, 4));
+        assertEquals("ajax toss", Transform.diceware("aspen spoon 567 scrap", 1, 4));
+
+        assertEquals("movie extra beat chap", Transform.diceware("", 4, 4));
+        assertEquals("solon cough vigil mew", Transform.diceware("abc", 4, 4));
+        assertEquals("spiro keel dow curd", Transform.diceware("hello", 4, 4));
+        assertEquals("aspen spoon 567 scrap", Transform.diceware("hello world", 4, 4));
+        assertEquals("ajax toss gules filch", Transform.diceware("aspen spoon 567 scrap", 4, 4));
     }
 }

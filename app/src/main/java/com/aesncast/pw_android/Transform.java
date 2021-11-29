@@ -51,7 +51,7 @@ public class Transform {
         return new BigInteger(1, bytes);
     }
 
-    private static long seed(Object i, long min, long max)
+    public static long seed(Object i, long min, long max)
     {
         try {
             _random.seed(i);
@@ -208,21 +208,48 @@ public class Transform {
 
     public static String insert(Object s, int index, String to_insert)
     {
-        StringBuilder sb = new StringBuilder(toString(s));
+        String _s = toString(s);
+
+        if (index < 0)
+            index = 0;
+
+        if (index > _s.length())
+            index = _s.length();
+
+        StringBuilder sb = new StringBuilder(_s);
         sb.insert(index, to_insert);
         return sb.toString();
     }
 
     public static String insert(Object s, int index, char to_insert)
     {
-        StringBuilder sb = new StringBuilder(toString(s));
+        String _s = toString(s);
+
+        if (index < 0)
+            index = 0;
+
+        if (index > _s.length())
+            index = _s.length();
+
+        StringBuilder sb = new StringBuilder(_s);
         sb.insert(index, to_insert);
         return sb.toString();
     }
 
     public static String replace_at(Object s, int index, char replacement)
     {
-        StringBuilder sb = new StringBuilder(toString(s));
+        String _s = toString(s);
+
+        if (_s.isEmpty())
+            return _s;
+
+        if (index < 0)
+            index = 0;
+
+        if (index >= _s.length())
+            index = _s.length()-1;
+
+        StringBuilder sb = new StringBuilder(_s);
         sb.setCharAt(index, replacement);
         return sb.toString();
     }
@@ -310,5 +337,39 @@ public class Transform {
         }
 
         return _s;
+    }
+
+    private static String diceware_list(Object s, int min_words, int max_words, String[] wordlist)
+    {
+        String _s = toString(s);
+
+        int num_words = (int)seed(s, min_words, max_words);
+        String[] selected = new String[num_words];
+
+        int len = wordlist.length - 1;
+
+        for (int i = 0; i < num_words; ++i)
+        {
+            byte[] hsh = sha256(_s + String.valueOf(i));
+            int sd = (int)seed(hsh, 0, len);
+            selected[i] = wordlist[sd];
+        }
+
+        return String.join(" ", selected);
+    }
+
+    public static String diceware(Object s, int min_words, int max_words)
+    {
+        return diceware_list(s, min_words, max_words, PwWordlist.wordlist);
+    }
+
+    public static String diceware_short(Object s)
+    {
+        return diceware(s, 3, 4);
+    }
+
+    public static String diceware_long(Object s)
+    {
+        return diceware(s, 4, 5);
     }
 }
