@@ -67,4 +67,40 @@ public class CompatibilityTest {
         assertEquals("Aye Seno_r Bi #taft", good_password( "0", "0", "0"));
         assertEquals("junk Zc fl=eck hat", good_password( "hello", "world", "!"));
     }
+
+    @Test
+    public void good_password_sequence_test() throws NoSuchMethodException {
+        Sequence s = new Sequence("good_password");
+        Segment s1 = new Segment("init");
+        s1.parameters.add(new SegmentParam(SegmentParam.ParamType.Field, "key"));
+        s1.parameters.add(new SegmentParam(SegmentParam.ParamType.Field, "domain"));
+        s1.parameters.add(new SegmentParam(SegmentParam.ParamType.Field, "user"));
+        s.segments.add(s1);
+
+        Segment s2 = new Segment("diceware");
+        s2.parameters.add(new SegmentParam(SegmentParam.ParamType.Number, 4));
+        s2.parameters.add(new SegmentParam(SegmentParam.ParamType.Number, 4));
+        s.segments.add(s2);
+
+        Segment s3 = new Segment("capitalize_some");
+        s.segments.add(s3);
+
+        Segment s4 = new Segment("add_some_simple_special_characters");
+        s.segments.add(s4);
+
+        assertEquals("Treat Go&p Tug 5th", s.execute("", "", ""));
+        assertEquals("leona Asset shar%k utter", s.execute("a", "a", "a"));
+        assertEquals("Owens Farad: 6000 Doze_n", s.execute("a", "b", "c"));
+        assertEquals("jkl Zing? Chomp phyla]", s.execute("b", "b", "b"));
+        assertEquals("Byway Flow vying Subtl=y", s.execute("c", "c", "c"));
+        assertEquals("80 #Tone Prom D:rank", s.execute("abc", "abc", "abc"));
+        assertEquals("Scald+ qh knurl Braun", s.execute("abc", "ghi", "def"));
+        assertEquals("ga_ur fin=e des Wac", s.execute("key", "domain", "user"));
+        assertEquals("Hast da.da scol&d Fuel", s.execute("1", "1", "1"));
+        assertEquals("Suave t_ube sworn duet", s.execute("1", "2", "3"));
+        assertEquals("a]rcana lease= Knapp rare", s.execute("4", "5", "6"));
+        assertEquals("Lsi Po*et Spice Sylow", s.execute("7", "8", "9"));
+        assertEquals("Aye Seno_r Bi #taft", s.execute("0", "0", "0"));
+        assertEquals("junk Zc fl=eck hat", s.execute("hello", "world", "!"));
+    }
 }
