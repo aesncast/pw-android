@@ -1,4 +1,4 @@
-package com.aesncast.pw_android.util;
+package com.aesncast.PwCore.util;
 
 public class MathUtil {
     public static double logB(int num, int base) {

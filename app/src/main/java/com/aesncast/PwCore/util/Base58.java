@@ -1,4 +1,4 @@
-package com.aesncast.pw_android.util;
+package com.aesncast.PwCore.util;
 
 /*
  * Copyright 2011 Google Inc.

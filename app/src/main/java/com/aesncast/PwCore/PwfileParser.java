@@ -1,4 +1,4 @@
-package com.aesncast.pw_android;
+package com.aesncast.PwCore;
 
 import java.text.ParseException;
 import java.util.ArrayList;

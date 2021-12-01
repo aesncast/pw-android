@@ -1,4 +1,4 @@
-package com.aesncast.pw_android;
+package com.aesncast.PwCore;
 
 /*
  normally this would be an inner class of Segment, but alas, Java is retarded when it comes

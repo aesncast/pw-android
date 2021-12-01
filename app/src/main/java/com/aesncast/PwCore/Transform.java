@@ -1,16 +1,16 @@
-package com.aesncast.pw_android;
+package com.aesncast.PwCore;
 
 /*
     transformation functions to mimic
     https://github.com/aesncast/pw-py/blob/master/pw/transform.py
  */
 
-import com.aesncast.pw_android.util.Array;
-import com.aesncast.pw_android.util.Base58;
-import com.aesncast.pw_android.util.Base64;
-import com.aesncast.pw_android.util.PyRandom;
-import com.aesncast.pw_android.util.SHA;
-import com.aesncast.pw_android.util.StringUtil;
+import com.aesncast.PwCore.util.Array;
+import com.aesncast.PwCore.util.Base58;
+import com.aesncast.PwCore.util.Base64;
+import com.aesncast.PwCore.util.PyRandom;
+import com.aesncast.PwCore.util.SHA;
+import com.aesncast.PwCore.util.StringUtil;
 
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
@@ -18,8 +18,6 @@ import java.nio.ByteOrder;
 import java.nio.charset.StandardCharsets;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.stream.Stream;
 
 public class Transform {
     private static final PyRandom _random = new PyRandom();

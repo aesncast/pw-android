@@ -1,6 +1,5 @@
-package com.aesncast.pw_android;
+package com.aesncast.PwCore;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;

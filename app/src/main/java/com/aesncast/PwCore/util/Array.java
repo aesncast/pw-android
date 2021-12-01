@@ -1,4 +1,4 @@
-package com.aesncast.pw_android.util;
+package com.aesncast.PwCore.util;
 
 import java.util.Arrays;
 

@@ -1,9 +1,13 @@
-package com.aesncast.pw_android;
+package com.aesncast.PwCore;
 
 import static org.junit.Assert.assertEquals;
-import org.junit.Test;
 
-import java.util.function.Consumer;
+import com.aesncast.PwCore.Segment;
+import com.aesncast.PwCore.SegmentParam;
+import com.aesncast.PwCore.Sequence;
+import com.aesncast.PwCore.Transform;
+
+import org.junit.Test;
 
 public class CompatibilityTest {
     @Test

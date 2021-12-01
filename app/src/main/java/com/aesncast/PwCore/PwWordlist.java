@@ -1,4 +1,4 @@
-package com.aesncast.pw_android;
+package com.aesncast.PwCore;
 
 public class PwWordlist {
     public final static String[] wordlist = new String[]{

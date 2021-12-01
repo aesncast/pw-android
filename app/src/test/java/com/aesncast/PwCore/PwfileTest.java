@@ -1,6 +1,9 @@
-package com.aesncast.pw_android;
+package com.aesncast.PwCore;
 
 import static org.junit.Assert.assertEquals;
+
+import com.aesncast.PwCore.Pwfile;
+import com.aesncast.PwCore.PwfileParser;
 
 import org.junit.Test;
 

@@ -1,13 +1,10 @@
-package com.aesncast.pw_android;
+package com.aesncast.PwCore;
 
 import static org.junit.Assert.assertEquals;
 
-import com.aesncast.pw_android.util.PyRandom;
-import com.aesncast.pw_android.util.UInt32;
+import com.aesncast.PwCore.util.UInt32;
 
 import org.junit.Test;
-
-import java.math.BigInteger;
 
 public class UInt32Test {
     @Test

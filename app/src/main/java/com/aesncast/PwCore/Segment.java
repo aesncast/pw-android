@@ -1,9 +1,7 @@
-package com.aesncast.pw_android;
+package com.aesncast.PwCore;
 
 import java.lang.reflect.Method;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class Segment {

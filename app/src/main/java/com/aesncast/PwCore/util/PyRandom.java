@@ -1,21 +1,17 @@
-package com.aesncast.pw_android.util;
+package com.aesncast.PwCore.util;
 
 /*
     class to generate the same random numbers as with python random.
     https://github.com/python/cpython/blob/3.10/Lib/random.py
  */
 
-import android.provider.Contacts;
-
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.IntBuffer;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 public class PyRandom {
