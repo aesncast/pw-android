@@ -65,4 +65,19 @@ public class SegmentParam {
     {
         return this.type == other.type && this.value.equals(other.value);
     }
+
+    public String toString()
+    {
+        switch (this.type)
+        {
+            case Field:
+                return "$" + this.value;
+            case String:
+                return "\"" + this.value + "\"";
+            case Number:
+                return String.valueOf(this.value);
+        }
+
+        return "";
+    }
 }
