@@ -4,6 +4,9 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.246875" />
+        <entry key="app/src/main/res/layout/fragment_domains_users.xml" value="0.29936594202898553" />
+        <entry key="app/src/main/res/layout/fragment_recent_passwords.xml" value="0.29936594202898553" />
+        <entry key="app/src/main/res/layout/fragment_sequence.xml" value="0.29936594202898553" />
         <entry key="app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.3234375" />
       </map>
     </option>

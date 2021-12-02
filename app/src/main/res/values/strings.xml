@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">pw-android</string>
+    <string name="recent">Recent</string>
+    <string name="domains_and_users"><![CDATA[Domains & Users]]></string>
+    <string name="sequences">Sequences</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Recent things</string>
 </resources>
