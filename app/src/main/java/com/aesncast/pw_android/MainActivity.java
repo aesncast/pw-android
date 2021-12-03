@@ -1,19 +1,10 @@
 package com.aesncast.pw_android;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
-import androidx.lifecycle.Lifecycle;
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
-import androidx.navigation.ui.AppBarConfiguration;
-import androidx.navigation.ui.NavigationUI;
-import androidx.viewpager2.adapter.FragmentStateAdapter;
-import androidx.viewpager2.widget.ViewPager2;
 
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -23,13 +14,10 @@ import android.view.MenuItem;
 import androidx.appcompat.widget.Toolbar;
 
 import com.google.android.material.navigation.NavigationView;
-import com.google.android.material.tabs.TabLayout;
-import com.google.android.material.tabs.TabLayoutMediator;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
+    private int current_fragment = 0;
+
     public static Handler handler;
     private DrawerLayout drawerLayout;
     private Toolbar toolbar;
@@ -43,17 +31,27 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
 
+        setContentView(R.layout.activity_main);
         handler = new Handler();
 
+        setupPwfile();
         setupFragments();
         setupTopbar();
         setupDrawer();
         setupDrawerToggle();
 
-        setActiveFragment(mainFragment);
-        setTitle("Home");
+        if (savedInstanceState == null)
+            navigateTo(R.id.nav_home);
+    }
+
+    private void setupPwfile()
+    {
+        if (PwfileSingleton.instance == null) {
+            PwPreferences prefs = new PwPreferences(this);
+            PwfileSingleton.instance = new PwfileController(prefs);
+            PwfileSingleton.instance.load();
+        }
     }
 
     private void setupFragments()
@@ -128,30 +126,55 @@ public class MainActivity extends AppCompatActivity {
             });
     }
 
+    private void updateTitle()
+    {
+        if (current_fragment == R.id.nav_home)
+            setTitle(getString(R.string.home));
+        else if (current_fragment == R.id.nav_password)
+            setTitle(getString(R.string.generate_password));
+        else if (current_fragment == R.id.nav_settings)
+            setTitle(getString(R.string.settings));
+    }
+
     private void setActiveFragment(Fragment fragment)
     {
         FragmentManager fragmentManager = getSupportFragmentManager();
         handler.post(() -> fragmentManager.beginTransaction().replace(R.id.main_content_frame, fragment).commit());
     }
 
-    public void selectDrawerItem(MenuItem menuItem) {
-        // Insert the fragment by replacing any existing fragment
+    private void navigateTo(int id)
+    {
         Fragment fragment = null;
 
-        int itemId = menuItem.getItemId();
-        if (itemId == R.id.nav_home)
+        if (id == R.id.nav_home)
             fragment = mainFragment;
-        else if (itemId == R.id.nav_settings)
+        else if (id == R.id.nav_password)
+            fragment = PasswordFragment.newInstance("", "", PwfileSingleton.instance.get().default_sequence_name);
+        else if (id == R.id.nav_settings)
             fragment = settingsFragment;
 
+        this.current_fragment = id;
         setActiveFragment(fragment);
+        updateTitle();
+    }
+
+    public void selectDrawerItem(MenuItem menuItem) {
+        // Insert the fragment by replacing any existing fragment
+        int itemId = menuItem.getItemId();
+        navigateTo(itemId);
 
         // Highlight the selected item has been done by NavigationView
         menuItem.setChecked(true);
 
-        // Set action bar title
-        setTitle(menuItem.getTitle());
-
         drawerLayout.closeDrawers();
+    }
+
+    @Override
+    public void onBackPressed()
+    {
+        if (current_fragment == R.id.nav_home)
+            finish();
+        else
+            navigateTo(R.id.nav_home);
     }
 }

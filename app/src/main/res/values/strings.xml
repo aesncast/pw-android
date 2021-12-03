@@ -26,4 +26,12 @@
     <string name="pw_android">pw-android</string>
     <string name="open">open</string>
     <string name="close">close</string>
+    <string name="new_password">add domain or user</string>
+    <string name="domain">Domain</string>
+    <string name="user">User</string>
+    <string name="key">Key</string>
+    <string name="good_password">good_password</string>
+    <string name="sequence">Sequence</string>
+    <string name="generate">Generate</string>
+    <string name="generate_password">Generate Password</string>
 </resources>
