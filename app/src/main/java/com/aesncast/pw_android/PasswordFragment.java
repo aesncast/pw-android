@@ -5,14 +5,27 @@ import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.aesncast.PwCore.PwDomain;
+import com.aesncast.PwCore.PwUser;
+import com.aesncast.PwCore.Pwfile;
+import com.aesncast.PwCore.Sequence;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+
 public class PasswordFragment extends Fragment {
+    private static final int THRESHOLD = 0;
     private static final String ARG_DOMAIN = "domain";
     private static final String ARG_USER = "user";
     private static final String ARG_SEQUENCE = "sequence";
@@ -27,6 +40,9 @@ public class PasswordFragment extends Fragment {
     private EditText keyEntry;
     private AutoCompleteTextView sequenceEntry;
     private Button generatePasswordButton;
+    private Button passwordLabel;
+    private String password;
+    private boolean password_visible = false;
 
     public PasswordFragment() {
     }
@@ -68,16 +84,124 @@ public class PasswordFragment extends Fragment {
 
         generatePasswordButton = view.findViewById(R.id.generate_button);
         generatePasswordButton.setOnClickListener(v -> this.generatePassword());
+
+        passwordLabel = view.findViewById(R.id.password_label);
+        passwordLabel.setOnClickListener(v -> this.togglePassword());
     }
 
     private void setupDomainEntry()
     {
         domainEntry = view.findViewById(R.id.domain_entry);
-        domainEntry.setAutofillHints("a", "b", "cde");
+        domainEntry.setThreshold(THRESHOLD);
+        updateDomainSuggestions();
+
+        domainEntry.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count)
+            {
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                updateUserSuggestions();
+            }
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int
+                    after) {
+            }
+        });
+    }
+
+    private void updateDomainSuggestions()
+    {
+        if (domainEntry == null)
+            return;
+
+        List<String> domains = new ArrayList<>();
+
+        if (userEntry == null || userEntry.getText().toString().isEmpty())
+        {
+            domains = new ArrayList<>(PwfileSingleton.instance.get().domains.keySet());
+        }
+        else
+        {
+            String user = userEntry.getText().toString();
+
+            for (PwDomain d : PwfileSingleton.instance.get().domains.values())
+                if (d.users.containsKey(user))
+                    domains.add(d.name);
+        }
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(view.getContext(),
+                android.R.layout.simple_dropdown_item_1line, domains.toArray(new String[]{}));
+        domainEntry.setAdapter(adapter);
     }
 
     private void setupUserEntry() {
         userEntry = view.findViewById(R.id.user_entry);
+        userEntry.setThreshold(THRESHOLD);
+        updateUserSuggestions();
+
+        userEntry.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count)
+            {
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                updateDomainSuggestions();
+                setDomainToUsersDefault();
+            }
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int
+                    after) {
+            }
+        });
+    }
+
+    private void setDomainToUsersDefault()
+    {
+        String domain = domainEntry.getText().toString();
+        String user = userEntry.getText().toString();
+        Pwfile instance = PwfileSingleton.instance.get();
+
+        if (!instance.domains.containsKey(domain) || !instance.domains.get(domain).users.containsKey(user))
+            return;
+
+        sequenceEntry.setText(instance.domains.get(domain).users.get(user).sequence_name);
+    }
+
+    private void updateUserSuggestions()
+    {
+        if (userEntry == null)
+            return;
+
+        List<String> users = new ArrayList<>();
+        Pwfile instance = PwfileSingleton.instance.get();
+
+        if (domainEntry == null || domainEntry.getText().toString().isEmpty())
+        {
+            for (PwDomain d : instance.domains.values())
+                for (PwUser u : d.users.values())
+                    users.add(u.name);
+
+            users = new ArrayList<>(new HashSet<>(users));
+        }
+        else
+        {
+            String domain = domainEntry.getText().toString();
+
+            if (instance.domains.containsKey(domain))
+                for (PwUser u : instance.domains.get(domain).users.values())
+                    users.add(u.name);
+        }
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(view.getContext(),
+                android.R.layout.simple_dropdown_item_1line, users.toArray(new String[]{}));
+        userEntry.setAdapter(adapter);
     }
 
     private void setupKeyEntry() {
@@ -86,6 +210,26 @@ public class PasswordFragment extends Fragment {
 
     private void setupSequenceEntry() {
         sequenceEntry = view.findViewById(R.id.sequence_entry);
+        sequenceEntry.setThreshold(THRESHOLD);
+        updateSequenceSuggestions();
+    }
+
+    private void updateSequenceSuggestions() {
+        if (sequenceEntry == null)
+            return;
+
+        List<String> sequences = new ArrayList<>();
+        Pwfile instance = PwfileSingleton.instance.get();
+
+        System.out.println(instance.sequences.size());
+        for (String i : instance.sequences.keySet())
+            System.out.println(i);
+
+        sequences.addAll(instance.sequences.keySet());
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(view.getContext(),
+                android.R.layout.simple_dropdown_item_1line, sequences.toArray(new String[]{}));
+        sequenceEntry.setAdapter(adapter);
     }
 
     private void generatePassword() {
@@ -93,12 +237,49 @@ public class PasswordFragment extends Fragment {
         String user = userEntry.getText().toString();
         String sequenceName = sequenceEntry.getText().toString();
         String key = keyEntry.getText().toString();
+        Pwfile instance = PwfileSingleton.instance.get();
 
-        AlertDialog.Builder a = new AlertDialog.Builder(view.getContext());
-        a.setTitle("abc");
-        a.setMessage(String.format("%s, %s, %s, %s", key, domain, user, sequenceName));
-        a.create().show();
+        if (sequenceName.isEmpty())
+            sequenceName = "DEFAULT";
+
+        Sequence s = instance.getSequence(sequenceName);
+
+        try
+        {
+            password = s.execute(key, domain, user);
+        }
+        catch (Exception e)
+        {
+            AlertDialog.Builder a = new AlertDialog.Builder(view.getContext());
+            a.setTitle(R.string.something_went_wrong);
+            a.setMessage(e.getMessage());
+            a.create().show();
+
+            return;
+        }
+
+        passwordLabel.setVisibility(View.VISIBLE);
+        passwordLabel.setEnabled(true);
+        hidePassword();
+        // TODO: copy to clipboard
     }
 
-    // TODO: onUserChange: set sequence automatically
+    private void togglePassword() {
+        if (password_visible)
+            showPassword();
+        else
+            hidePassword();
+    }
+
+    private void hidePassword()
+    {
+        password_visible = true;
+        passwordLabel.setText(R.string.password_copied_tap_to_show);
+    }
+
+    private void showPassword()
+    {
+        password_visible = false;
+        passwordLabel.setText(new String(password));
+    }
 }

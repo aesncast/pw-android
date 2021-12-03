@@ -34,4 +34,6 @@
     <string name="sequence">Sequence</string>
     <string name="generate">Generate</string>
     <string name="generate_password">Generate Password</string>
+    <string name="password_copied_tap_to_show">password copied, tap to show</string>
+    <string name="something_went_wrong">Something went wrong</string>
 </resources>
