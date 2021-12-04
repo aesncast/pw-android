@@ -43,7 +43,7 @@ public class Pwfile {
 
     public Sequence getSequence(String name)
     {
-        if (name == "DEFAULT")
+        if (name.equals("DEFAULT"))
             name = this.default_sequence_name;
 
         return this.sequences.get(name);

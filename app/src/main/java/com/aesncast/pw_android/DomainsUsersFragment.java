@@ -3,12 +3,18 @@ package com.aesncast.pw_android;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.aesncast.PwCore.Pwfile;
+
 public class DomainsUsersFragment extends Fragment {
+    private View view;
 
     public DomainsUsersFragment() {
     }
@@ -29,6 +35,20 @@ public class DomainsUsersFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_domains_users, container, false);
+        view = inflater.inflate(R.layout.fragment_domains_users, container, false);
+        setupDomainList();
+        return view;
+    }
+
+    private void setupDomainList()
+    {
+        Pwfile instance = PwfileSingleton.instance.get();
+
+        RecyclerView domainRecyclerView = view.findViewById(R.id.domain_recyclerview);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(view.getContext());
+        DomainItemAdapter domainItemAdapter = new DomainItemAdapter(instance.domains.values());
+
+        domainRecyclerView.setAdapter(domainItemAdapter);
+        domainRecyclerView.setLayoutManager(layoutManager);
     }
 }

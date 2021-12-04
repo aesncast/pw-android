@@ -221,10 +221,6 @@ public class PasswordFragment extends Fragment {
         List<String> sequences = new ArrayList<>();
         Pwfile instance = PwfileSingleton.instance.get();
 
-        System.out.println(instance.sequences.size());
-        for (String i : instance.sequences.keySet())
-            System.out.println(i);
-
         sequences.addAll(instance.sequences.keySet());
 
         ArrayAdapter<String> adapter = new ArrayAdapter<>(view.getContext(),
@@ -244,24 +240,62 @@ public class PasswordFragment extends Fragment {
 
         Sequence s = instance.getSequence(sequenceName);
 
+        if (s == null)
+        {
+            showError(String.format("Sequence '%s' not found", sequenceName));
+            passwordLabel.setVisibility(View.GONE);
+            passwordLabel.setEnabled(false);
+            return;
+        }
+
         try
         {
             password = s.execute(key, domain, user);
         }
         catch (Exception e)
         {
-            AlertDialog.Builder a = new AlertDialog.Builder(view.getContext());
-            a.setTitle(R.string.something_went_wrong);
-            a.setMessage(e.getMessage());
-            a.create().show();
-
+            showError(e.getMessage());
+            passwordLabel.setVisibility(View.GONE);
+            passwordLabel.setEnabled(false);
             return;
         }
+
+        updatePwfile(domain, user, s.name);
+        updateUserSuggestions();
+        updateDomainSuggestions();
 
         passwordLabel.setVisibility(View.VISIBLE);
         passwordLabel.setEnabled(true);
         hidePassword();
         // TODO: copy to clipboard
+    }
+
+    private void updatePwfile(String domain, String user, String sequenceName) {
+        Pwfile instance = PwfileSingleton.instance.get();
+
+        PwDomain dom = null;
+
+        if (!instance.domains.containsKey(domain)) {
+            dom = new PwDomain(domain);
+            instance.domains.put(domain, dom);
+        }
+        else
+            dom = instance.domains.get(domain);
+
+        PwUser usr = null;
+
+        if (!dom.users.containsKey(user))
+        {
+            usr = new PwUser(user, sequenceName);
+            dom.users.put(user, usr);
+        }
+        else
+            usr = dom.users.get(user);
+
+        Sequence s = instance.getSequence(sequenceName);
+        usr.sequence_name = s.name;
+
+        PwfileSingleton.instance.save();
     }
 
     private void togglePassword() {
@@ -281,5 +315,13 @@ public class PasswordFragment extends Fragment {
     {
         password_visible = false;
         passwordLabel.setText(new String(password));
+    }
+
+    private void showError(String msg)
+    {
+        AlertDialog.Builder a = new AlertDialog.Builder(view.getContext());
+        a.setTitle(R.string.something_went_wrong);
+        a.setMessage(msg);
+        a.create().show();
     }
 }
