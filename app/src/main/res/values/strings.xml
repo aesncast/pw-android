@@ -36,4 +36,5 @@
     <string name="generate_password">Generate Password</string>
     <string name="password_copied_tap_to_show">password copied, tap to show</string>
     <string name="something_went_wrong">Something went wrong</string>
+    <string name="generated_password">Generated Password</string>
 </resources>

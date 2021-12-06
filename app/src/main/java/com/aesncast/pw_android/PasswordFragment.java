@@ -1,6 +1,9 @@
 package com.aesncast.pw_android;
 
 import android.app.AlertDialog;
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -279,7 +282,10 @@ public class PasswordFragment extends Fragment {
         passwordLabel.setVisibility(View.VISIBLE);
         passwordLabel.setEnabled(true);
         hidePassword();
-        // TODO: copy to clipboard
+        // copy to clipboard
+        ClipboardManager clipboard = (ClipboardManager) getContext().getSystemService(Context.CLIPBOARD_SERVICE);
+        ClipData clip = ClipData.newPlainText(getContext().getString(R.string.generated_password), password);
+        clipboard.setPrimaryClip(clip);
     }
 
     private void updatePwfile(String domain, String user, String sequenceName) {
