@@ -142,6 +142,17 @@ public class MainActivity extends AppCompatActivity {
         handler.post(() -> fragmentManager.beginTransaction().replace(R.id.main_content_frame, fragment).commit());
     }
 
+    public void navigateToPasswordGenerator(String domain, String user, String sequenceName)
+    {
+        if (this.current_fragment == R.id.nav_password)
+            return;
+
+        Fragment fragment = PasswordFragment.newInstance(domain, user, sequenceName);
+        this.current_fragment = R.id.nav_password;
+        setActiveFragment(fragment);
+        updateTitle();
+    }
+
     private void navigateTo(int id)
     {
         Fragment fragment = null;

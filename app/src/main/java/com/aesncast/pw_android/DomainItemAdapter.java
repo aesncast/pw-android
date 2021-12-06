@@ -57,7 +57,7 @@ public class DomainItemAdapter
 
         layoutManager.setInitialPrefetchItemCount(domainItem.users.size());
 
-        UserItemAdapter childItemAdapter = new UserItemAdapter(domainItem.users.values());
+        UserItemAdapter childItemAdapter = new UserItemAdapter(domainItem.name, domainItem.users.values());
 
         parentViewHolder.domainUsersRecyclerViews.setLayoutManager(layoutManager);
         parentViewHolder.domainUsersRecyclerViews.setAdapter(childItemAdapter);

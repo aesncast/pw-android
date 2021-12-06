@@ -18,11 +18,13 @@ public class UserItemAdapter
     extends RecyclerView
                 .Adapter<UserItemAdapter.UserItemViewHolder> {
 
+    private final String domainName;
     private final List<PwUser> userList;
 
     // Constructor
-    UserItemAdapter(Collection<PwUser> users)
+    UserItemAdapter(String domain, Collection<PwUser> users)
     {
+        this.domainName = domain;
         this.userList = new ArrayList<>(users);
     }
 
@@ -40,7 +42,7 @@ public class UserItemAdapter
                             viewGroup,
                             false);
 
-        return new UserItemViewHolder(view);
+        return new UserItemViewHolder(view, domainName);
     }
 
     @Override
@@ -48,11 +50,15 @@ public class UserItemAdapter
         @NonNull UserItemViewHolder childViewHolder,
         int position)
     {
-        PwUser childItem
-            = userList.get(position);
+        PwUser childItem = userList.get(position);
 
         childViewHolder.userNameLabel.setText(childItem.name);
         childViewHolder.userSequenceLabel.setText(childItem.sequence_name);
+
+        childViewHolder.view.setOnClickListener(l -> {
+            MainActivity a = (MainActivity)AndroidUtil.getActivity(childViewHolder.view);
+            a.navigateToPasswordGenerator(domainName, childItem.name, childItem.sequence_name);
+        });
     }
 
     @Override
@@ -64,12 +70,14 @@ public class UserItemAdapter
     static class UserItemViewHolder
         extends RecyclerView.ViewHolder {
 
+        View view;
         TextView userNameLabel;
         TextView userSequenceLabel;
 
-        UserItemViewHolder(View itemView)
+        UserItemViewHolder(View itemView, String domainName)
         {
             super(itemView);
+            view = itemView;
             userNameLabel = itemView.findViewById(R.id.user_name_label);
             userSequenceLabel = itemView.findViewById(R.id.user_sequence_label);
         }

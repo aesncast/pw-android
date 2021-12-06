@@ -30,9 +30,9 @@ public class PasswordFragment extends Fragment {
     private static final String ARG_USER = "user";
     private static final String ARG_SEQUENCE = "sequence";
 
-    private String arg_domain;
-    private String arg_user;
-    private String arg_sequence;
+    private String arg_domain = "";
+    private String arg_user = "";
+    private String arg_sequence = "";
 
     private View view;
     private AutoCompleteTextView domainEntry;
@@ -93,6 +93,10 @@ public class PasswordFragment extends Fragment {
     {
         domainEntry = view.findViewById(R.id.domain_entry);
         domainEntry.setThreshold(THRESHOLD);
+
+        if (!arg_domain.isEmpty())
+            domainEntry.setText(arg_domain);
+
         updateDomainSuggestions();
 
         domainEntry.addTextChangedListener(new TextWatcher() {
@@ -141,6 +145,10 @@ public class PasswordFragment extends Fragment {
     private void setupUserEntry() {
         userEntry = view.findViewById(R.id.user_entry);
         userEntry.setThreshold(THRESHOLD);
+
+        if (!arg_user.isEmpty())
+            userEntry.setText(arg_user);
+
         updateUserSuggestions();
 
         userEntry.addTextChangedListener(new TextWatcher() {
@@ -211,6 +219,10 @@ public class PasswordFragment extends Fragment {
     private void setupSequenceEntry() {
         sequenceEntry = view.findViewById(R.id.sequence_entry);
         sequenceEntry.setThreshold(THRESHOLD);
+
+        if (!arg_sequence.isEmpty())
+            sequenceEntry.setText(arg_sequence);
+
         updateSequenceSuggestions();
     }
 
