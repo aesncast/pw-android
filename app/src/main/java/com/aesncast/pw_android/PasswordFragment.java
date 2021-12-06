@@ -33,6 +33,8 @@ public class PasswordFragment extends Fragment {
     private static final String ARG_USER = "user";
     private static final String ARG_SEQUENCE = "sequence";
 
+    private PwPreferences preferences;
+
     private String arg_domain = "";
     private String arg_user = "";
     private String arg_sequence = "";
@@ -80,6 +82,8 @@ public class PasswordFragment extends Fragment {
 
     private void setup()
     {
+        preferences = new PwPreferences(view.getContext());
+
         setupDomainEntry();
         setupUserEntry();
         setupKeyEntry();
@@ -282,6 +286,12 @@ public class PasswordFragment extends Fragment {
         passwordLabel.setVisibility(View.VISIBLE);
         passwordLabel.setEnabled(true);
         hidePassword();
+
+        copyToClipboard();
+        preferences.pushRecentUser(domain, user, s.name);
+    }
+
+    private void copyToClipboard() {
         // copy to clipboard
         ClipboardManager clipboard = (ClipboardManager) getContext().getSystemService(Context.CLIPBOARD_SERVICE);
         ClipData clip = ClipData.newPlainText(getContext().getString(R.string.generated_password), password);

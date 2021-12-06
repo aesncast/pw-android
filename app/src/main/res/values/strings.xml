@@ -37,4 +37,6 @@
     <string name="password_copied_tap_to_show">password copied, tap to show</string>
     <string name="something_went_wrong">Something went wrong</string>
     <string name="generated_password">Generated Password</string>
+    <string name="no_recent_entries">No recent entries</string>
+    <string name="no_entries_found">No entries found</string>
 </resources>

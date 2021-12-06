@@ -12,20 +12,22 @@
         android:id="@+id/domain_name_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:padding="12sp"
+        android:paddingLeft="12sp"
+        android:paddingTop="12sp"
+        android:paddingRight="12sp"
+        android:paddingBottom="6sp"
         android:textSize="20sp"
         android:textStyle="bold" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="12dp"
         android:orientation="vertical">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/user_recyclerview"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            />
+            android:layout_height="wrap_content" />
     </LinearLayout>
+
 </LinearLayout>

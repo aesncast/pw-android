@@ -5,26 +5,24 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.aesncast.PwCore.PwUser;
-
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.aesncast.PwCore.PwUser;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-public class UserItemAdapter
+public class RecentUserItemAdapter
     extends RecyclerView
-                .Adapter<UserItemAdapter.UserItemViewHolder> {
+                .Adapter<RecentUserItemAdapter.UserItemViewHolder> {
 
-    private final String domainName;
-    private final List<PwUser> userList;
+    private final List<RecentUserEntry> userList;
 
     // Constructor
-    UserItemAdapter(String domain, Collection<PwUser> users)
+    RecentUserItemAdapter(Collection<RecentUserEntry> users)
     {
-        this.domainName = domain;
         this.userList = new ArrayList<>(users);
     }
 
@@ -38,7 +36,7 @@ public class UserItemAdapter
         // Here we inflate the corresponding
         // layout of the child item
         View view = LayoutInflater.from(viewGroup.getContext()).inflate(
-                            R.layout.listitem_user,
+                            R.layout.listitem_recent_user,
                             viewGroup,
                             false);
 
@@ -50,14 +48,15 @@ public class UserItemAdapter
         @NonNull UserItemViewHolder childViewHolder,
         int position)
     {
-        PwUser childItem = userList.get(position);
+        RecentUserEntry childItem = userList.get(position);
 
-        childViewHolder.userNameLabel.setText(childItem.name);
-        childViewHolder.userSequenceLabel.setText(childItem.sequence_name);
+        childViewHolder.userNameLabel.setText(childItem.userName);
+        childViewHolder.userDomainLabel.setText(childItem.domainName);
+        childViewHolder.userSequenceLabel.setText(childItem.sequenceName);
 
         childViewHolder.view.setOnClickListener(l -> {
             MainActivity a = (MainActivity)AndroidUtil.getActivity(childViewHolder.view);
-            a.navigateToPasswordGenerator(domainName, childItem.name, childItem.sequence_name);
+            a.navigateToPasswordGenerator(childItem.domainName, childItem.userName, childItem.sequenceName);
         });
     }
 
@@ -72,6 +71,7 @@ public class UserItemAdapter
 
         View view;
         TextView userNameLabel;
+        TextView userDomainLabel;
         TextView userSequenceLabel;
 
         UserItemViewHolder(View itemView)
@@ -79,6 +79,7 @@ public class UserItemAdapter
             super(itemView);
             view = itemView;
             userNameLabel = itemView.findViewById(R.id.user_name_label);
+            userDomainLabel = itemView.findViewById(R.id.user_domain_label);
             userSequenceLabel = itemView.findViewById(R.id.user_sequence_label);
         }
     }

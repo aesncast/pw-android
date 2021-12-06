@@ -1,5 +1,6 @@
 package com.aesncast.pw_android;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 
@@ -8,17 +9,24 @@ import androidx.annotation.Nullable;
 import com.aesncast.PwCore.Pwfile;
 import com.aesncast.PwCore.PwfileParser;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 public class PwPreferences implements SharedPreferences {
-    private SharedPreferences preferences;
-    private static final String PREFS_PWFILES_NAME = "pwfiles";
+    private final SharedPreferences preferences;
+    private static final String PREFS_SETTINGS_NAME = "pw_settings";
+
     private static final String PREFS_PWLIST4_KEY = "pwlist4";
+    private static final String PREFS_RECENT_KEY = "recent_users";
+    private static final String PREFS_RECENT_LIMIT_KEY = "recent_users_limit";
 
     public PwPreferences(Context ctx)
     {
-        preferences = ctx.getSharedPreferences(PREFS_PWFILES_NAME, Context.MODE_PRIVATE);
+        preferences = ctx.getSharedPreferences(PREFS_SETTINGS_NAME, Context.MODE_PRIVATE);
     }
 
     public SharedPreferences getPreferences()
@@ -51,6 +59,118 @@ public class PwPreferences implements SharedPreferences {
         e.apply();
     }
 
+    @SuppressLint("DefaultLocale")
+    public void pushRecentUser(String domainName, String userName, String sequenceName)
+    {
+        if (!contains(PREFS_RECENT_KEY)) {
+            Editor e = edit();
+            e.putStringSet(PREFS_RECENT_KEY, new HashSet<>());
+            e.apply();
+        }
+
+        List<String> current = new ArrayList<>(getStringSet(PREFS_RECENT_KEY, null));
+        String domainUser = String.format("%s:%s", domainName, userName);
+
+        current.sort((x, y) -> {
+            try {
+                String[] sp1 = x.split(":");
+                String[] sp2 = y.split(":");
+
+                return Integer.valueOf(sp1[0]).compareTo(Integer.valueOf(sp2[0]));
+            }
+            catch (Exception e)
+            {
+                return 1;
+            }
+        });
+
+        int i = 0;
+        for (; i < current.size(); ++i)
+            if (current.get(i).matches("^.*:"+domainUser+":.*$"))
+                break;
+
+        if (i < current.size() && i > 0) {
+            Collections.swap(current, 0, i);
+
+            current.set(0, String.format("%d:%s:%s", 0, domainUser, sequenceName));
+
+            String prev = current.get(i);
+            String[] sp = prev.split(":");
+            current.set(i, String.format("%d:%s:%s:%s", i, sp[1], sp[2], sp[3]));
+        }
+        else if (i >= current.size())
+        {
+            current.add(0, String.format("%d:%s:%s", 0, domainUser, sequenceName));
+
+            for (i = 1; i < current.size(); ++i) {
+                String prev = current.get(i);
+                String[] sp = prev.split(":");
+                current.set(i, String.format("%d:%s:%s:%s", i, sp[1], sp[2], sp[3]));
+            }
+
+            int limit = getRecentUsersLimit();
+
+            while (current.size() > limit)
+                current.remove(current.size()-1);
+        }
+        else
+            current.set(0, String.format("%d:%s:%s", 0, domainUser, sequenceName));
+
+        Set<String> toSave = new HashSet<>(current);
+        Editor e = edit();
+        e.putStringSet(PREFS_RECENT_KEY, toSave);
+        e.apply();
+    }
+
+    public List<RecentUserEntry> getRecentUsers()
+    {
+        List<RecentUserEntry> ret = new ArrayList<>();
+
+        if (!contains(PREFS_RECENT_KEY)) {
+            Editor e = edit();
+            e.putStringSet(PREFS_RECENT_KEY, new HashSet<>());
+            e.apply();
+        }
+
+        List<String> current = new ArrayList<>(getStringSet(PREFS_RECENT_KEY, null));
+
+        if (current.isEmpty())
+            return ret;
+
+        current.sort((x, y) -> {
+            try {
+                String[] sp1 = x.split(":");
+                String[] sp2 = y.split(":");
+
+                return Integer.valueOf(sp1[0]).compareTo(Integer.valueOf(sp2[0]));
+            }
+            catch (Exception e)
+            {
+                return 1;
+            }
+        });
+
+        for (String s : current) {
+            String[] sp = s.split(":");
+            ret.add(new RecentUserEntry(sp[1], sp[2], sp[3]));
+        }
+
+        return ret;
+    }
+
+    public int getRecentUsersLimit()
+    {
+        return getInt(PREFS_RECENT_LIMIT_KEY, 3);
+    }
+
+    public void setRecentUsersLimit(int limit)
+    {
+        Editor e = edit();
+        e.putInt(PREFS_RECENT_LIMIT_KEY, limit);
+        e.apply();
+    }
+
+    // Interface
     @Override
     public Map<String, ?> getAll() {
         return preferences.getAll();

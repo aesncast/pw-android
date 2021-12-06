@@ -13,7 +13,9 @@ import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 
@@ -29,6 +31,7 @@ public class MainTabsFragment extends Fragment implements TabLayoutMediator.TabC
     private TabLayout tabLayout;
     private ViewPager2 viewPager;
 
+    private FloatingActionButton newPasswordButton;
     private RecentPasswordsFragment recentPasswordsFragment;
     private DomainsUsersFragment domainsUsersFragment;
     private SequencesFragment sequencesFragment;
@@ -56,7 +59,16 @@ public class MainTabsFragment extends Fragment implements TabLayoutMediator.TabC
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_main_tabs, container, false);
         setupTabs(v);
+        setupNewPasswordButton(v);
         return v;
+    }
+
+    private void setupNewPasswordButton(View v) {
+        newPasswordButton = v.findViewById(R.id.new_password_button);
+        newPasswordButton.setOnClickListener(l -> {
+            MainActivity a = (MainActivity)AndroidUtil.getActivity(v);
+            a.navigateToPasswordGenerator();
+        });
     }
 
     private void setupTabs(View v)

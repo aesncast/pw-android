@@ -10,11 +10,13 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.aesncast.PwCore.Pwfile;
 
 public class DomainsUsersFragment extends Fragment {
     private View view;
+    private TextView emptyText;
 
     public DomainsUsersFragment() {
     }
@@ -36,8 +38,14 @@ public class DomainsUsersFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_domains_users, container, false);
-        setupDomainList();
+        setup();
         return view;
+    }
+
+    private void setup() {
+        emptyText = view.findViewById(R.id.emptyText);
+
+        setupDomainList();
     }
 
     private void setupDomainList()
@@ -50,5 +58,10 @@ public class DomainsUsersFragment extends Fragment {
 
         domainRecyclerView.setAdapter(domainItemAdapter);
         domainRecyclerView.setLayoutManager(layoutManager);
+
+        if (instance.domains.isEmpty())
+            emptyText.setVisibility(View.VISIBLE);
+        else
+            emptyText.setVisibility(View.GONE);
     }
 }
