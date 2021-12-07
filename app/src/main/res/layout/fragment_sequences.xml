@@ -5,10 +5,18 @@
     android:layout_height="match_parent"
     tools:context=".SequencesFragment">
 
-    <!-- TODO: Update blank fragment layout -->
     <TextView
+        android:id="@+id/emptyText"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/sequences" />
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:text="@string/no_entries_found"
+        android:textAlignment="center"
+        android:visibility="gone" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/sequence_recyclerview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 
 </FrameLayout>

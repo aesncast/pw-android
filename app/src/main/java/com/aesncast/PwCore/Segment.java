@@ -78,4 +78,17 @@ public class Segment {
             return "";
         }
     }
+
+    public String toString()
+    {
+        StringBuilder s = new StringBuilder();
+
+        s.append(function);
+        s.append("(");
+
+        s.append(String.join(", ", parameters.stream().map(x -> x.toString()).toArray(String[]::new)));
+        s.append(")");
+
+        return s.toString();
+    }
 }

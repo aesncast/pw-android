@@ -23,6 +23,7 @@ public class PwPreferences implements SharedPreferences {
     private static final String PREFS_PWLIST4_KEY = "pwlist4";
     private static final String PREFS_RECENT_KEY = "recent_users";
     private static final String PREFS_RECENT_LIMIT_KEY = "recent_users_limit";
+    private static final int PREFS_RECENT_LIMIT_DEFAULT = 12;
 
     public PwPreferences(Context ctx)
     {
@@ -160,7 +161,7 @@ public class PwPreferences implements SharedPreferences {
 
     public int getRecentUsersLimit()
     {
-        return getInt(PREFS_RECENT_LIMIT_KEY, 3);
+        return getInt(PREFS_RECENT_LIMIT_KEY, PREFS_RECENT_LIMIT_DEFAULT);
     }
 
     public void setRecentUsersLimit(int limit)

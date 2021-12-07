@@ -28,5 +28,24 @@ public class Sequence {
 
         return acc;
     }
+
+    public String toString()
+    {
+        StringBuilder s = new StringBuilder();
+
+        s.append("[");
+
+        if (is_default)
+            s.append("+");
+
+        s.append(name).append("]\n");
+
+        String[] segs = segments.stream().map(x -> "    " + x.toString()).toArray(String[]::new);
+        String segString = String.join("\n", segs);
+
+        s.append(segString);
+
+        return s.toString();
+    }
 }
 

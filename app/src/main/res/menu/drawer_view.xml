@@ -9,6 +9,10 @@
             android:icon="@android:drawable/ic_lock_lock"
             android:title="@string/generate_password" />
         <item
+            android:id="@+id/nav_sequence"
+            android:icon="@android:drawable/ic_lock_lock"
+            android:title="@string/sequence_editor" />
+        <item
             android:id="@+id/nav_settings"
             android:icon="@mipmap/ic_launcher"
             android:title="@string/settings" />

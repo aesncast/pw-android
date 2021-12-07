@@ -39,4 +39,9 @@
     <string name="generated_password">Generated Password</string>
     <string name="no_recent_entries">No recent entries</string>
     <string name="no_entries_found">No entries found</string>
+    <string name="sequence_editor">Sequence Editor</string>
+    <string name="sequence_name">Sequence Name</string>
+    <string name="sequence_code">Sequence Code</string>
+    <string name="save">Save</string>
+    <string name="default_string">Default</string>
 </resources>

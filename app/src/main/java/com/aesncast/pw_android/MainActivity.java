@@ -132,6 +132,8 @@ public class MainActivity extends AppCompatActivity {
             setTitle(getString(R.string.home));
         else if (current_fragment == R.id.nav_password)
             setTitle(getString(R.string.generate_password));
+        else if (current_fragment == R.id.nav_sequence)
+            setTitle(getString(R.string.sequence_editor));
         else if (current_fragment == R.id.nav_settings)
             setTitle(getString(R.string.settings));
     }
@@ -158,6 +160,22 @@ public class MainActivity extends AppCompatActivity {
         updateTitle();
     }
 
+    public void navigateToSequenceEditor()
+    {
+        navigateToSequenceEditor("");
+    }
+
+    public void navigateToSequenceEditor(String sequenceName)
+    {
+        if (this.current_fragment == R.id.nav_sequence)
+            return;
+
+        Fragment fragment = SequenceEditorFragment.newInstance(sequenceName);
+        this.current_fragment = R.id.nav_sequence;
+        setActiveFragment(fragment);
+        updateTitle();
+    }
+
     private void navigateTo(int id)
     {
         Fragment fragment = null;
@@ -166,6 +184,8 @@ public class MainActivity extends AppCompatActivity {
             fragment = mainFragment;
         else if (id == R.id.nav_password)
             fragment = PasswordFragment.newInstance("", "", PwfileSingleton.instance.get().default_sequence_name);
+        else if (id == R.id.nav_sequence)
+            fragment = SequenceEditorFragment.newInstance("");
         else if (id == R.id.nav_settings)
             fragment = settingsFragment;
 

@@ -9,8 +9,10 @@
         <entry key="app/src/main/res/layout/fragment_password.xml" value="0.2604166666666667" />
         <entry key="app/src/main/res/layout/fragment_recent_passwords.xml" value="0.29936594202898553" />
         <entry key="app/src/main/res/layout/fragment_sequence.xml" value="0.29936594202898553" />
+        <entry key="app/src/main/res/layout/fragment_sequence_editor.xml" value="0.27943840579710144" />
         <entry key="app/src/main/res/layout/listitem_domain.xml" value="0.25" />
         <entry key="app/src/main/res/layout/listitem_recent_user.xml" value="0.2866847826086957" />
+        <entry key="app/src/main/res/layout/listitem_sequence.xml" value="0.27943840579710144" />
         <entry key="app/src/main/res/layout/listitem_user.xml" value="0.2898550724637681" />
         <entry key="app/src/main/res/layout/nav_header.xml" value="0.26197916666666665" />
         <entry key="app/src/main/res/layout/settings_activity.xml" value="0.26197916666666665" />

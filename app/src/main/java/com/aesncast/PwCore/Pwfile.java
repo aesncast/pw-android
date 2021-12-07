@@ -1,5 +1,8 @@
 package com.aesncast.PwCore;
 
+import androidx.annotation.NonNull;
+
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -49,6 +52,17 @@ public class Pwfile {
         return this.sequences.get(name);
     }
 
+    // gets all non-builtin sequences
+    public List<Sequence> getSequences()
+    {
+        List<Sequence> ret = new ArrayList<>(sequences.values());
+
+        ret.removeIf(x -> BUILTIN_SEQUENCE_NAMES.contains(x.name));
+
+        return ret;
+    }
+
+    @NonNull
     public String toString()
     {
         StringBuilder s = new StringBuilder();
@@ -69,31 +83,17 @@ public class Pwfile {
             s.append("\n# don't change, only copy & make new ones to be safe,");
             s.append("\n# otherwise you risk losing passwords if you forget");
             s.append("\n# the sequences.");
-        }
-
-        for (Sequence seq : this.sequences.values())
-        {
-            if (BUILTIN_SEQUENCE_NAMES.contains(seq.name))
-                continue;
-
-            s.append("\n[");
-
-            if (seq.is_default)
-                s.append("+");
-
-            s.append(seq.name + "]");
-
-            for (Segment seg : seq.segments)
-            {
-                s.append("\n    " + seg.function);
-                s.append("(");
-
-                s.append(String.join(", ", seg.parameters.stream().map(x -> x.toString()).toArray(String[]::new)));
-                s.append(")");
-            }
-
             s.append("\n");
         }
+
+        String seqString = String.join("\n", this.sequences.values().stream()
+                .filter(seq -> !BUILTIN_SEQUENCE_NAMES.contains(seq.name))
+                .map(seq -> seq.toString())
+                .toArray(String[]::new)
+        );
+
+        s.append(seqString);
+        s.append("\n");
 
         return s.toString();
     }

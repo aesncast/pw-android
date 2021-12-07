@@ -9,11 +9,9 @@ import androidx.lifecycle.Lifecycle;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 import androidx.viewpager2.widget.ViewPager2;
 
-import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
@@ -28,10 +26,14 @@ import java.util.List;
  * create an instance of this fragment.
  */
 public class MainTabsFragment extends Fragment implements TabLayoutMediator.TabConfigurationStrategy {
+    private static final int INDEX_RECENT = 0;
+    private static final int INDEX_DOMAINS_AND_USERS = 1;
+    private static final int INDEX_SEQUENCES = 2;
+
     private TabLayout tabLayout;
     private ViewPager2 viewPager;
 
-    private FloatingActionButton newPasswordButton;
+    private FloatingActionButton addHoverButton;
     private RecentPasswordsFragment recentPasswordsFragment;
     private DomainsUsersFragment domainsUsersFragment;
     private SequencesFragment sequencesFragment;
@@ -59,15 +61,21 @@ public class MainTabsFragment extends Fragment implements TabLayoutMediator.TabC
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_main_tabs, container, false);
         setupTabs(v);
-        setupNewPasswordButton(v);
+        setupHoverButton(v);
         return v;
     }
 
-    private void setupNewPasswordButton(View v) {
-        newPasswordButton = v.findViewById(R.id.new_password_button);
-        newPasswordButton.setOnClickListener(l -> {
+    private void setupHoverButton(View v) {
+        addHoverButton = v.findViewById(R.id.addHoverButton);
+        addHoverButton.setOnClickListener(l -> {
             MainActivity a = (MainActivity)AndroidUtil.getActivity(v);
-            a.navigateToPasswordGenerator();
+
+            int cur = viewPager.getCurrentItem();
+
+            if (cur == INDEX_RECENT || cur == INDEX_DOMAINS_AND_USERS)
+                a.navigateToPasswordGenerator();
+            else if (cur == INDEX_SEQUENCES)
+                a.navigateToSequenceEditor();
         });
     }
 

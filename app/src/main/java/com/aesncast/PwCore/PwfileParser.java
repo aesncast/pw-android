@@ -116,8 +116,10 @@ public class PwfileParser {
         if (!ret.sequences.containsKey("good_password"))
             ret.sequences.put("good_password", get_good_password_sequence());
 
-        if (ret.default_sequence_name.isEmpty())
+        if (ret.default_sequence_name.isEmpty()) {
             ret.default_sequence_name = "good_password";
+            ret.sequences.get("good_password").is_default = true;
+        }
 
         return ret;
     }

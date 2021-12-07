@@ -32,9 +32,6 @@ public class RecentUserItemAdapter
         @NonNull ViewGroup viewGroup,
         int i)
     {
-
-        // Here we inflate the corresponding
-        // layout of the child item
         View view = LayoutInflater.from(viewGroup.getContext()).inflate(
                             R.layout.listitem_recent_user,
                             viewGroup,
