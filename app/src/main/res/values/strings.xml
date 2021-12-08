@@ -48,4 +48,6 @@
     <string name="sequence_is_readonly">Sequence is read-only</string>
     <string name="saved">Saved</string>
     <string name="remove">Remove</string>
+    <string name="cannot_remove_default_sequence">Cannot remove default sequence</string>
+    <string name="cannot_remove_readonly_sequence">Cannot remove read-only sequence</string>
 </resources>

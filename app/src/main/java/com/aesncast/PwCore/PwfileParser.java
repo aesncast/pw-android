@@ -86,6 +86,8 @@ public class PwfileParser {
                     {
                         if (!ret.default_sequence_name.isEmpty())
                             throw new ParseException(String.format("multiple default sequences not allowed: '%s' and '%s' are both marked default", seq.name, ret.default_sequence_name), i);
+
+                        ret.default_sequence_name = seq.name;
                     }
 
                     ret.sequences.put(seq.name, seq);
