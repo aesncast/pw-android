@@ -1,11 +1,14 @@
 package com.aesncast.pw_android;
 
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.aesncast.PwCore.PwUser;
+import com.aesncast.PwCore.Pwfile;
+import com.aesncast.PwCore.Sequence;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -20,6 +23,7 @@ public class UserItemAdapter
 
     private final String domainName;
     private final List<PwUser> userList;
+    int position = 0;
 
     // Constructor
     UserItemAdapter(String domain, Collection<PwUser> users)
@@ -59,6 +63,11 @@ public class UserItemAdapter
             MainActivity a = (MainActivity)AndroidUtil.getActivity(childViewHolder.view);
             a.navigateToPasswordGenerator(domainName, childItem.name, childItem.sequence_name);
         });
+
+        childViewHolder.itemView.setOnLongClickListener(v -> {
+            this.position = childViewHolder.getAdapterPosition();
+            return false;
+        });
     }
 
     @Override
@@ -67,8 +76,20 @@ public class UserItemAdapter
         return userList.size();
     }
 
+    public void deleteItem(int position) {
+        PwUser removed = userList.remove(position);
+
+        Pwfile instance = PwfileSingleton.instance.get();
+        instance.domains.get(domainName).users.remove(removed.name);
+        PwfileSingleton.instance.save();
+
+        notifyItemRemoved(position);
+    }
+
     static class UserItemViewHolder
-        extends RecyclerView.ViewHolder {
+        extends RecyclerView.ViewHolder
+            implements View.OnCreateContextMenuListener
+    {
 
         View view;
         TextView userNameLabel;
@@ -80,6 +101,10 @@ public class UserItemAdapter
             view = itemView;
             userNameLabel = itemView.findViewById(R.id.user_name_label);
             userSequenceLabel = itemView.findViewById(R.id.user_sequence_label);
+        }
+
+        @Override
+        public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         }
     }
 }
