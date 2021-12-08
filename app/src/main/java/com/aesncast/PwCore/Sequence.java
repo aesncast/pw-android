@@ -7,6 +7,7 @@ public class Sequence {
     public String name;
     public List<Segment> segments;
     public boolean is_default;
+    public boolean readonly;
 
     public Sequence()
     {
@@ -18,6 +19,7 @@ public class Sequence {
         this.name = name;
         this.segments = new ArrayList<>();
         this.is_default = false;
+        this.readonly = false;
     }
 
     public String execute(String key, String domain, String user) throws NoSuchMethodException {

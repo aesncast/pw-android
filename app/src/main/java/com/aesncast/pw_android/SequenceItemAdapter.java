@@ -1,5 +1,6 @@
 package com.aesncast.pw_android;
 
+import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -42,6 +43,13 @@ public class SequenceItemAdapter
         Sequence childItem = sequences.get(position);
 
         childViewHolder.sequenceNameLabel.setText(childItem.name);
+
+        if (childItem.is_default && !childItem.readonly)
+            childViewHolder.sequenceNameLabel.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
+        else if (!childItem.is_default && childItem.readonly)
+            childViewHolder.sequenceNameLabel.setTypeface(Typeface.defaultFromStyle(Typeface.ITALIC));
+        else if (childItem.is_default && childItem.readonly)
+            childViewHolder.sequenceNameLabel.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD_ITALIC));
 
         childViewHolder.view.setOnClickListener(l -> {
             MainActivity a = (MainActivity)AndroidUtil.getActivity(childViewHolder.view);

@@ -9,7 +9,7 @@ import java.util.stream.Stream;
 public class PwfileParser {
     static final String forbiddenSymbols = ":;,<>[]";
 
-    private static class ParseResult<T>
+    public static class ParseResult<T>
     {
         public int i;
         public T result;
@@ -124,7 +124,7 @@ public class PwfileParser {
         return ret;
     }
 
-    private static ParseResult<Sequence> parsePwlist4Sequence(String[] lines, int i) throws ParseException {
+    public static ParseResult<Sequence> parsePwlist4Sequence(String[] lines, int i) throws ParseException {
         Sequence seq = new Sequence("");
 
         seq.name = parsePwlist4SequenceName(lines[i]);
@@ -140,11 +140,11 @@ public class PwfileParser {
         i += 1;
         int j = i;
 
-        while (i < lines.length && lines[i] != "\n")
+        while (i < lines.length && !lines[i].isEmpty())
             i += 1;
 
         Stream<String> seglines = Arrays.stream(lines).skip(j).limit(i-j);
-        String segstr = String.join(" ", seglines.map(p -> p.trim()).toArray(String[]::new));
+        String segstr = String.join(" ", seglines.map(String::trim).toArray(String[]::new));
 
         seq.segments = parsePwlist4SequenceSegments(segstr);
 
@@ -284,7 +284,7 @@ public class PwfileParser {
         char c = s.charAt(i);
 
         if (c != '"')
-            throw new ParseException(String.format("undexpected symbol '%s' in string", c), -1);
+            throw new ParseException(String.format("unexpected symbol '%s' in string", c), -1);
 
         i += 1;
 
@@ -314,7 +314,7 @@ public class PwfileParser {
         char c = s.charAt(i);
 
         if (!Character.isDigit(c))
-            throw new ParseException(String.format("undexpected symbol '%s' in number", c), -1);
+            throw new ParseException(String.format("unexpected symbol '%s' in number", c), -1);
 
         ret += c;
         i += 1;
@@ -345,7 +345,7 @@ public class PwfileParser {
         char c = s.charAt(i);
 
         if ("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_".indexOf(c) == -1)
-            throw new ParseException(String.format("undexpected symbol '%s' in identifier", c), -1);
+            throw new ParseException(String.format("unexpected symbol '%s' in identifier", c), -1);
 
         ret += c;
         i += 1;

@@ -44,4 +44,8 @@
     <string name="sequence_code">Sequence Code</string>
     <string name="save">Save</string>
     <string name="default_string">Default</string>
+    <string name="cannot_remove_only_default_sequence">Cannot remove only default sequence</string>
+    <string name="sequence_is_readonly">Sequence is read-only</string>
+    <string name="saved">Saved</string>
+    <string name="remove">Remove</string>
 </resources>

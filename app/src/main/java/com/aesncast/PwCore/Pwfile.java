@@ -2,6 +2,7 @@ package com.aesncast.PwCore;
 
 import androidx.annotation.NonNull;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -29,6 +30,7 @@ public class Pwfile {
     private void init_legacy_sequences()
     {
         Sequence legacy1 = new Sequence("LEGACY1");
+        legacy1.readonly = true;
         Segment legacy1seg = new Segment("bad_legacy1");
         legacy1seg.parameters.add(new SegmentParam(SegmentParam.ParamType.Field, "key"));
         legacy1seg.parameters.add(new SegmentParam(SegmentParam.ParamType.Field, "domain"));
@@ -36,6 +38,7 @@ public class Pwfile {
         this.sequences.put("LEGACY1", legacy1);
 
         Sequence legacy2 = new Sequence("LEGACY2");
+        legacy2.readonly = true;
         Segment legacy2seg = new Segment("bad_legacy2");
         legacy2seg.parameters.add(new SegmentParam(SegmentParam.ParamType.Field, "key"));
         legacy2seg.parameters.add(new SegmentParam(SegmentParam.ParamType.Field, "domain"));
@@ -62,6 +65,20 @@ public class Pwfile {
         return ret;
     }
 
+    public void setDefaultSequence(String sequenceName)
+    {
+        if (this.default_sequence_name.equals(sequenceName))
+            return;
+
+        if (sequenceName.isEmpty() || sequenceName.equals("DEFAULT"))
+            return;
+
+        this.default_sequence_name = sequenceName;
+
+        for (Sequence s : this.sequences.values())
+            s.is_default = s.name.equals(sequenceName);
+    }
+
     @NonNull
     public String toString()
     {
@@ -86,7 +103,7 @@ public class Pwfile {
             s.append("\n");
         }
 
-        String seqString = String.join("\n", this.sequences.values().stream()
+        String seqString = String.join("\n\n", this.sequences.values().stream()
                 .filter(seq -> !BUILTIN_SEQUENCE_NAMES.contains(seq.name))
                 .map(seq -> seq.toString())
                 .toArray(String[]::new)

@@ -52,7 +52,7 @@ public class SequencesFragment extends Fragment {
 
     private void setupSequenceList() {
         Pwfile instance = PwfileSingleton.instance.get();
-        List<Sequence> sequences = instance.getSequences();
+        List<Sequence> sequences = new ArrayList<>(instance.sequences.values());
 
         RecyclerView sequenceRecyclerview = view.findViewById(R.id.sequence_recyclerview);
         LinearLayoutManager layoutManager = new LinearLayoutManager(view.getContext());

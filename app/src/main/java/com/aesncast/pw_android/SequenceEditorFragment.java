@@ -1,5 +1,6 @@
 package com.aesncast.pw_android;
 
+import android.app.AlertDialog;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -12,12 +13,16 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Switch;
+import android.widget.Toast;
 
 import com.aesncast.PwCore.Pwfile;
+import com.aesncast.PwCore.PwfileParser;
 import com.aesncast.PwCore.Sequence;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -70,6 +75,32 @@ public class SequenceEditorFragment extends Fragment {
 
         saveSequenceButton = view.findViewById(R.id.sequence_save_button);
         saveSequenceButton.setOnClickListener(v -> this.saveSequence());
+
+        setupReadonly();
+    }
+
+    private void setupReadonly() {
+        Pwfile instance = PwfileSingleton.instance.get();
+
+        if (!instance.sequences.containsKey(arg_sequenceName))
+            return;
+
+        Sequence s = instance.sequences.get(arg_sequenceName);
+
+        if (!s.readonly)
+            return;
+
+        sequenceNameEntry.setEnabled(false);
+        sequenceCodeEntry.setEnabled(false);
+        // technically shouldn't do this, but we have no way of storing default built-in sequences yet
+        defaultSwitch.setEnabled(false);
+        saveSequenceButton.setEnabled(false);
+
+        /*
+        View.OnClickListener showReadonlyToast = (v) -> Toast.makeText(v.getContext(), getString(R.string.sequence_is_readonly), Toast.LENGTH_SHORT).show();
+        sequenceNameEntry.setOnClickListener(showReadonlyToast);
+        sequenceCodeEntry.setOnClickListener(showReadonlyToast);
+        */
     }
 
     private void setupDefaultSwitch() {
@@ -86,6 +117,17 @@ public class SequenceEditorFragment extends Fragment {
         Sequence s = instance.sequences.get(arg_sequenceName);
 
         defaultSwitch.setChecked(s.is_default);
+
+        if (s.is_default)
+        {
+            defaultSwitch.setEnabled(false);
+
+            /* can't consume onClick events when view is disabled
+            defaultSwitch.setOnClickListener(v ->
+                Toast.makeText(v.getContext(), getString(R.string.cannot_remove_only_default_sequence), Toast.LENGTH_SHORT).show()
+            );
+             */
+        }
     }
 
     private void setupSequenceCodeEntry() {
@@ -106,10 +148,37 @@ public class SequenceEditorFragment extends Fragment {
     }
 
     private void saveSequence() {
-        // TODO: implement
         String seqName = this.sequenceNameEntry.getText().toString();
         String source = this.sequenceCodeEntry.getText().toString();
-        System.out.format("%s: %s\n", seqName, source);
+        boolean def = this.defaultSwitch.isChecked();
+
+        String fullSource = "[" + seqName + "]\n" + String.join("\n    ", source.split("\n"));
+
+        PwfileParser.ParseResult<Sequence> pr = null;
+
+        try {
+            pr = PwfileParser.parsePwlist4Sequence(fullSource.split("\n"), 0);
+        }
+        catch (ParseException e)
+        {
+            showError(e.getMessage());
+            return;
+        }
+
+        Sequence seq = pr.result;
+        seq.is_default = def;
+        Pwfile instance = PwfileSingleton.instance.get();
+
+        instance.sequences.put(seq.name, seq);
+
+        if (seq.is_default) {
+            instance.setDefaultSequence(seq.name);
+            defaultSwitch.setEnabled(false);
+        }
+
+        PwfileSingleton.instance.save();
+
+        Toast.makeText(getContext(), R.string.saved, Toast.LENGTH_SHORT).show();
     }
 
     private void setupSequenceNameEntry() {
@@ -133,5 +202,13 @@ public class SequenceEditorFragment extends Fragment {
         ArrayAdapter<String> adapter = new ArrayAdapter<>(view.getContext(),
                 android.R.layout.simple_dropdown_item_1line, sequences.toArray(new String[]{}));
         sequenceNameEntry.setAdapter(adapter);
+    }
+
+    private void showError(String msg)
+    {
+        AlertDialog.Builder a = new AlertDialog.Builder(view.getContext());
+        a.setTitle(R.string.something_went_wrong);
+        a.setMessage(msg);
+        a.create().show();
     }
 }

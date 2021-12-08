@@ -43,7 +43,8 @@ public class PwPreferences implements SharedPreferences {
     public Pwfile getDefaultPwfile()
     {
         String defaultSrc = new Pwfile().toString();
-        return PwfileParser.parsePwlist4(getString(PREFS_PWLIST4_KEY, defaultSrc));
+        String actualSrc = getString(PREFS_PWLIST4_KEY, defaultSrc);
+        return PwfileParser.parsePwlist4(actualSrc);
     }
 
     public void putPwfile(String key, Pwfile value)
