@@ -56,4 +56,9 @@
     <string name="delete_empty_domain">Delete the empty domain?</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
+    <string name="clear_all_recent_users">Clear all recent Users</string>
+    <string name="data">Data</string>
+    <string name="clear_all_recent_users_description"><![CDATA[Clearing all recent Users empties the Recent tab, but will not affect saved Domains & Users.\nReally clear recent Users?]]></string>
+    <string name="clear_all_domains_and_users_description">This will delete all saved Domains and Users.\nReally delete all Domains and Users?</string>
+    <string name="clear_all_sequences_description">Clears all non-read-only, non-default sequences.\nReally clear Sequences?</string>
 </resources>

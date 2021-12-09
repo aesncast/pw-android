@@ -114,4 +114,8 @@ public class Pwfile {
 
         return s.toString();
     }
+
+    public void clearSequences() {
+        this.sequences.entrySet().removeIf(e -> !(e.getValue().readonly || e.getValue().is_default));
+    }
 }

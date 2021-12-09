@@ -125,6 +125,14 @@ public class PwPreferences implements SharedPreferences {
         e.apply();
     }
 
+    public void clearRecentUsers()
+    {
+        Set<String> toSave = new HashSet<>();
+        Editor e = edit();
+        e.putStringSet(PREFS_RECENT_KEY, toSave);
+        e.apply();
+    }
+
     public List<RecentUserEntry> getRecentUsers()
     {
         List<RecentUserEntry> ret = new ArrayList<>();
