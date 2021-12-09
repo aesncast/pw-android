@@ -27,14 +27,16 @@ public class SegmentParam {
     {
         String s = (String)value;
 
-        if (s == "key")
-            return key;
-        else if (s == "domain")
-            return domain;
-        else if (s == "user")
-            return user;
-        else
-            return "";
+        switch (s) {
+            case "key":
+                return key;
+            case "domain":
+                return domain;
+            case "user":
+                return user;
+            default:
+                return "";
+        }
     }
 
     public String getString()

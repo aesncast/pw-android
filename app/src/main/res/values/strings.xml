@@ -50,4 +50,10 @@
     <string name="remove">Remove</string>
     <string name="cannot_remove_default_sequence">Cannot remove default sequence</string>
     <string name="cannot_remove_readonly_sequence">Cannot remove read-only sequence</string>
+    <string name="clear_all_domains_and_users"><![CDATA[Clear all Domains & Users]]></string>
+    <string name="clear_all_sequences">Clear all Sequences</string>
+    <string name="domain_is_empty">Domain %s is empty</string>
+    <string name="delete_empty_domain">Delete the empty domain?</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
 </resources>

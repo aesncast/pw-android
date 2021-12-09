@@ -1,6 +1,8 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <!--
     <item
-        android:id="@+id/remove"
+        android:id="@+id/remove_domain_user"
         android:icon="@android:drawable/ic_delete"
         android:title="@string/remove" />
+    -->
 </menu>

@@ -203,7 +203,6 @@ public class Transform {
 
         for (char u: unsafe_characters) {
             String tmp = _s + u;
-            // System.out.format("seed: %s, len: %d\n", _s + u, safe_characters.length() - 1);
             int i = (int)seed(tmp, 0, safe_characters.length() - 1);
 
             if (_s.indexOf(u) != -1)

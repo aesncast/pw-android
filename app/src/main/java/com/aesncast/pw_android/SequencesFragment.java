@@ -82,14 +82,14 @@ public class SequencesFragment extends Fragment {
         super.onCreateContextMenu(menu, v, menuInfo);
         if (v.getId() == R.id.sequence_recyclerview) {
             MenuInflater inflater = getActivity().getMenuInflater();
-            inflater.inflate(R.menu.list_context_menu, menu);
+            inflater.inflate(R.menu.sequences_context_menu, menu);
         }
     }
 
     @Override
     public boolean onContextItemSelected(MenuItem item) {
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-        if (item.getItemId() == R.id.remove) {
+        if (item.getItemId() == R.id.remove_sequence) {
             int pos = ((SequenceItemAdapter)sequenceRecyclerView.getAdapter()).position;
             try {
                 adapter.deleteItem(pos);

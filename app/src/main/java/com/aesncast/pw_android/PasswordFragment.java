@@ -342,7 +342,7 @@ public class PasswordFragment extends Fragment {
     private void showPassword()
     {
         password_visible = false;
-        passwordLabel.setText(new String(password));
+        passwordLabel.setText(password);
     }
 
     private void showError(String msg)

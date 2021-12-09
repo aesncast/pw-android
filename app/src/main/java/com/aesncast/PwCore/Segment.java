@@ -70,7 +70,8 @@ public class Segment {
         System.arraycopy(params, 0, callparams, 1, params.length);
 
         try {
-            return (String) m.invoke(null, callparams);
+            String ret = (String) m.invoke(null, callparams);
+            return ret;
         }
         catch (Exception e)
         {
