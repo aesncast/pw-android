@@ -1,6 +1,20 @@
-<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory app:title="@string/app">
+        <SwitchPreference
+            app:key="start_on_password_generator"
+            app:title="@string/start_on_password_generator"
+            app:summary="@string/start_on_password_generator_description"
+            />
+    </PreferenceCategory>
 
     <PreferenceCategory app:title="@string/data">
+        <EditTextPreference
+            app:key="recent_users_limit"
+            app:title="@string/max_number_of_recent_users"
+            android:inputType="numberSigned"
+            />
+
         <Preference
             app:key="clear_all_recent_users"
             app:title="@string/clear_all_recent_users"

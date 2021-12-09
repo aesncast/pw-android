@@ -8,6 +8,7 @@ import androidx.annotation.Nullable;
 
 import com.aesncast.PwCore.Pwfile;
 import com.aesncast.PwCore.PwfileParser;
+import com.aesncast.PwCore.util.Array;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -24,6 +25,7 @@ public class PwPreferences implements SharedPreferences {
     private static final String PREFS_RECENT_KEY = "recent_users";
     private static final String PREFS_RECENT_LIMIT_KEY = "recent_users_limit";
     private static final int PREFS_RECENT_LIMIT_DEFAULT = 12;
+    private static final String PREFS_START_ON_PASSWORD_GEN_KEY = "start_on_password_generator";
 
     public PwPreferences(Context ctx)
     {
@@ -133,6 +135,37 @@ public class PwPreferences implements SharedPreferences {
         e.apply();
     }
 
+    private List<RecentUserEntry> getSortedRecentUsers()
+    {
+        List<RecentUserEntry> ret = new ArrayList<>();
+
+        if (!contains(PREFS_RECENT_KEY)) {
+            Editor e = edit();
+            e.putStringSet(PREFS_RECENT_KEY, new HashSet<>());
+            e.apply();
+        }
+
+        List<String> current = new ArrayList<>(getStringSet(PREFS_RECENT_KEY, null));
+
+        if (current.isEmpty())
+            return ret;
+
+        current.sort((x, y) -> {
+            try {
+                String[] sp1 = x.split(":");
+                String[] sp2 = y.split(":");
+
+                return Integer.valueOf(sp1[0]).compareTo(Integer.valueOf(sp2[0]));
+            }
+            catch (Exception e)
+            {
+                return 1;
+            }
+        });
+
+        return ret;
+    }
+
     public List<RecentUserEntry> getRecentUsers()
     {
         List<RecentUserEntry> ret = new ArrayList<>();
@@ -176,8 +209,41 @@ public class PwPreferences implements SharedPreferences {
 
     public void setRecentUsersLimit(int limit)
     {
+        if (limit < 0)
+            return;
+
+        int current_limit = getRecentUsersLimit();
+
         Editor e = edit();
         e.putInt(PREFS_RECENT_LIMIT_KEY, limit);
+
+        if (limit >= current_limit) {
+            e.apply();
+            return;
+        }
+
+        // shrink
+        List<RecentUserEntry> current = getRecentUsers();
+
+        List<String> n = new ArrayList<>();
+
+        for (int i = 0; i < limit; ++i)
+        {
+            RecentUserEntry f = current.get(i);
+            n.add(String.format("%d:%s:%s:%s", i, f.domainName, f.userName, f.sequenceName));
+        }
+
+        e.putStringSet(PREFS_RECENT_KEY, new HashSet<>(n));
+        e.apply();
+    }
+
+    public boolean getStartOnPasswordGenerator() {
+        return getBoolean(PREFS_START_ON_PASSWORD_GEN_KEY, false);
+    }
+
+    public void setStartOnPasswordGenerator(boolean value) {
+        Editor e = edit();
+        e.putBoolean(PREFS_START_ON_PASSWORD_GEN_KEY, value);
         e.apply();
     }
 

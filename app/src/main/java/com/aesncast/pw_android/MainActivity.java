@@ -28,10 +28,13 @@ public class MainActivity extends AppCompatActivity {
     private MainTabsFragment mainFragment;
     private SettingsFragment settingsFragment;
 
+    private PwPreferences preferences;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        preferences = new PwPreferences(this);
         setContentView(R.layout.activity_main);
         handler = new Handler();
 
@@ -41,15 +44,18 @@ public class MainActivity extends AppCompatActivity {
         setupDrawer();
         setupDrawerToggle();
 
-        if (savedInstanceState == null)
-            navigateTo(R.id.nav_home);
+        if (savedInstanceState == null) {
+            if (preferences.getStartOnPasswordGenerator())
+                navigateToPasswordGenerator();
+            else
+                navigateTo(R.id.nav_home);
+        }
     }
 
     private void setupPwfile()
     {
         if (PwfileSingleton.instance == null) {
-            PwPreferences prefs = new PwPreferences(this);
-            PwfileSingleton.instance = new PwfileController(prefs);
+            PwfileSingleton.instance = new PwfileController(preferences);
             PwfileSingleton.instance.load();
         }
     }
@@ -92,6 +98,7 @@ public class MainActivity extends AppCompatActivity {
         super.onConfigurationChanged(newConfig);
         // Pass any configuration change to the drawer toggles
         drawerToggle.onConfigurationChanged(newConfig);
+        updateTitle();
     }
 
     @Override

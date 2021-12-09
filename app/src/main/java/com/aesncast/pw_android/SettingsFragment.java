@@ -2,10 +2,13 @@ package com.aesncast.pw_android;
 
 import android.app.AlertDialog;
 import android.os.Bundle;
+import android.widget.Toast;
 
+import androidx.preference.EditTextPreference;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.PreferenceManager;
+import androidx.preference.SwitchPreference;
 
 import com.aesncast.PwCore.Pwfile;
 
@@ -18,9 +21,49 @@ public class SettingsFragment extends PreferenceFragmentCompat {
 
         preferences = new PwPreferences(this.getContext());
 
+        setupStartOnPasswordGeneratorPreference();
+        setupRecentUsersLimitPreference();
         setupClearRecentUsersPreference();
         setupClearDomainsAndUsers();
         setupClearAllSequences();
+    }
+
+    private void setupStartOnPasswordGeneratorPreference() {
+        PreferenceManager man = getPreferenceManager();
+        SwitchPreference pref = man.findPreference("start_on_password_generator");
+        pref.setChecked(preferences.getStartOnPasswordGenerator());
+
+        pref.setOnPreferenceChangeListener((x, val_) -> {
+            boolean val = (boolean)val_;
+
+            preferences.setStartOnPasswordGenerator(val);
+            return true;
+        });
+    }
+
+    private void setupRecentUsersLimitPreference() {
+        PreferenceManager man = getPreferenceManager();
+        EditTextPreference pref = man.findPreference("recent_users_limit");
+        pref.setText(String.valueOf(preferences.getRecentUsersLimit()));
+
+        pref.setOnPreferenceChangeListener((x, val_) -> {
+            int val = -1;
+
+            try {
+                val = Integer.parseInt((String) val_);
+            }
+            catch (Exception ignored)
+            {}
+
+            if (val < 0) {
+                Toast.makeText(this.getContext(), R.string.recent_users_negative_limit, Toast.LENGTH_LONG).show();
+                return false;
+            }
+
+            preferences.setRecentUsersLimit(val);
+
+            return true;
+        });
     }
 
     private void setupClearAllSequences() {
