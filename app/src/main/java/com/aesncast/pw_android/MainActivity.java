@@ -27,6 +27,7 @@ public class MainActivity extends AppCompatActivity {
 
     private MainTabsFragment mainFragment;
     private SettingsFragment settingsFragment;
+    private AboutFragment aboutFragment;
 
     private PwPreferences preferences;
 
@@ -64,6 +65,7 @@ public class MainActivity extends AppCompatActivity {
     {
         this.mainFragment = new MainTabsFragment();
         this.settingsFragment = new SettingsFragment();
+        this.aboutFragment = new AboutFragment();
     }
 
     private void setupTopbar()
@@ -143,6 +145,8 @@ public class MainActivity extends AppCompatActivity {
             setTitle(getString(R.string.sequence_editor));
         else if (current_fragment == R.id.nav_settings)
             setTitle(getString(R.string.settings));
+        else if (current_fragment == R.id.nav_about)
+            setTitle(getString(R.string.about));
     }
 
     private void setActiveFragment(Fragment fragment)
@@ -195,6 +199,8 @@ public class MainActivity extends AppCompatActivity {
             fragment = SequenceEditorFragment.newInstance("");
         else if (id == R.id.nav_settings)
             fragment = settingsFragment;
+        else if (id == R.id.nav_about)
+            fragment = aboutFragment;
 
         this.current_fragment = id;
         setActiveFragment(fragment);

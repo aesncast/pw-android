@@ -12,4 +12,6 @@
 /captures
 .externalNativeBuild
 .cxx
+production.jks
+production.properties
 local.properties
